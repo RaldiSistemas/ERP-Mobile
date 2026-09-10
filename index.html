@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Raldi Apontar</title>
+<meta name="theme-color" content="#982424">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Raldi Apontar">
+<link rel="icon" type="image/png" href="https://i.postimg.cc/9MsBrnJd/app-icone.png">
+<link rel="apple-touch-icon" href="https://i.postimg.cc/9MsBrnJd/app-icone.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://i.postimg.cc/9MsBrnJd/app-icone.png">
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<style>
+  :root{
+    --vm:#982424; --vm2:#7f1e1e; --tx:#2c2d31; --mut:#7c7c86;
+    --bg:#f2f1ec; --sf:#fff; --ln:#e2e0d8;
+    --am:#d4930d; --vd:#2f8f46; --rx:#7a6ea8; --az:#2f6fb5;
+    --sat:env(safe-area-inset-top,0px); --sab:env(safe-area-inset-bottom,0px);
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ height:100%; overscroll-behavior:none; }
+  body{ font-family:'Archivo',system-ui,-apple-system,sans-serif; color:var(--tx); background:var(--bg);
+    -webkit-font-smoothing:antialiased; font-size:15px; }
+  button,input,select{ font-family:inherit; }
+
+  .tela{ position:fixed; inset:0; display:none; flex-direction:column; }
+  .tela.on{ display:flex; }
+
+  /* ===== Login ===== */
+  #login{ background:linear-gradient(165deg,#2c2d32 0%,#1a1b1e 100%); align-items:center; justify-content:center;
+    padding:calc(28px + var(--sat)) 22px calc(28px + var(--sab)); }
+  .lg{ width:min(380px,100%); text-align:center; }
+  .lg-ic{ width:76px; height:76px; border-radius:20px; margin:0 auto 18px; display:block;
+    box-shadow:0 10px 30px rgba(0,0,0,.4); }
+  .lg-t{ font-family:'Poppins',sans-serif; font-size:25px; font-weight:600; color:#fff; }
+  .lg-s{ font-size:10px; font-weight:800; letter-spacing:.34em; text-transform:uppercase;
+    color:var(--vm); margin-top:8px; }
+  .lg-form{ margin-top:32px; text-align:left; }
+  .lg-f{ margin-bottom:14px; }
+  .lg-f label{ display:block; font-size:10.5px; font-weight:800; letter-spacing:.13em; text-transform:uppercase;
+    color:rgba(255,255,255,.42); margin-bottom:7px; }
+  .lg-f input{ width:100%; font-size:17px; padding:16px; border:1.5px solid rgba(255,255,255,.14);
+    border-radius:14px; background:rgba(255,255,255,.06); color:#fff; }
+  .lg-f input::placeholder{ color:rgba(255,255,255,.26); }
+  .lg-f input:focus{ outline:0; border-color:var(--vm); background:rgba(255,255,255,.1); }
+  .lg-e{ font-size:13px; font-weight:600; color:#e57373; min-height:19px; margin-bottom:6px; }
+  .lg-b{ width:100%; font-size:17px; font-weight:700; padding:17px; border:0; border-radius:14px;
+    background:var(--vm); color:#fff; box-shadow:0 8px 22px rgba(152,36,36,.4); }
+  .lg-b:disabled{ opacity:.45; box-shadow:none; }
+  .lg-d{ font-size:12px; line-height:1.55; margin-top:20px; padding:12px 14px; border-radius:11px; text-align:left; }
+  .lg-d:empty{ display:none; }
+  .lg-d.ok{ background:rgba(255,255,255,.05); color:rgba(255,255,255,.4); text-align:center; }
+  .lg-d.err{ background:rgba(152,36,36,.18); border:1px solid rgba(152,36,36,.4); color:#f0a6a6; }
+  .lg-d b{ display:block; color:#fff; margin-bottom:3px; }
+
+  /* ===== App ===== */
+  .topo{ background:var(--vm); color:#fff; padding:calc(11px + var(--sat)) 16px 11px;
+    display:flex; align-items:center; gap:12px; flex:0 0 auto; box-shadow:0 2px 10px rgba(0,0,0,.14); }
+  .topo img{ width:32px; height:32px; border-radius:9px; }
+  .topo-t{ flex:1; min-width:0; }
+  .topo-t b{ display:block; font-family:'Poppins',sans-serif; font-size:16px; font-weight:600; line-height:1.1; }
+  .topo-t span{ display:block; font-size:10.5px; opacity:.7; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .topo-b{ width:38px; height:38px; border:0; border-radius:11px; background:rgba(255,255,255,.16);
+    color:#fff; display:grid; place-items:center; flex:0 0 38px; }
+  .topo-b svg{ width:19px; height:19px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .voltar{ display:flex; align-items:center; gap:7px; font-size:15px; font-weight:600; color:#fff;
+    background:transparent; border:0; padding:0; }
+  .voltar svg{ width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; }
+  .corpo{ flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:14px 14px calc(24px + var(--sab)); }
+
+  .busca{ position:relative; margin-bottom:12px; }
+  .busca input{ width:100%; font-size:16px; padding:14px 14px 14px 42px; border:1px solid var(--ln);
+    border-radius:13px; background:var(--sf); color:var(--tx); }
+  .busca input:focus{ outline:2px solid var(--vm); outline-offset:-1px; border-color:transparent; }
+  .busca svg{ position:absolute; left:14px; top:50%; transform:translateY(-50%); width:18px; height:18px;
+    fill:none; stroke:var(--mut); stroke-width:2; }
+  .busca-x{ position:absolute; right:8px; top:50%; transform:translateY(-50%); width:30px; height:30px;
+    border:0; border-radius:999px; background:#e8e6de; color:var(--mut); font-size:19px; line-height:1;
+    display:grid; place-items:center; }
+  .filtros{ display:flex; gap:7px; overflow-x:auto; padding-bottom:3px; margin-bottom:13px; }
+  .fchip{ font-size:13px; font-weight:600; padding:8px 15px; border:1px solid var(--ln); border-radius:999px;
+    background:var(--sf); color:var(--mut); white-space:nowrap; flex:0 0 auto; }
+  .fchip.on{ background:var(--vm); border-color:var(--vm); color:#fff; }
+
+  /* cartão de projeto */
+  .pj{ background:var(--sf); border:1px solid var(--ln); border-radius:15px; padding:14px 15px;
+    margin-bottom:10px; display:flex; align-items:center; gap:13px; }
+  .pj-l{ flex:1; min-width:0; }
+  .pj-h{ display:flex; align-items:center; gap:8px; margin-bottom:5px; }
+  .pj-p{ font-family:ui-monospace,monospace; font-size:13px; font-weight:700; color:var(--tx); }
+  .pj-lo{ font-size:10.5px; font-weight:700; color:var(--az); background:rgba(47,111,181,.1);
+    padding:2px 7px; border-radius:5px; }
+  .pj-a{ font-size:16px; font-weight:700; color:var(--tx); line-height:1.25;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .pj-c{ font-size:12.5px; color:var(--mut); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .pj-b{ display:flex; align-items:center; gap:9px; margin-top:9px; }
+  .pj-bar{ flex:1; height:6px; background:#eceae4; border-radius:999px; overflow:hidden; }
+  .pj-bar i{ display:block; height:100%; border-radius:999px; }
+  .pj-pct{ font-size:12px; font-weight:700; min-width:34px; text-align:right; }
+  .pj-btn{ font-size:14px; font-weight:700; padding:13px 17px; border:0; border-radius:12px;
+    background:var(--vm); color:#fff; flex:0 0 auto; }
+  .pj-btn:active{ background:var(--vm2); }
+  .pj-btn.and{ background:var(--am); }
+  .pj-btn.pau{ background:var(--rx); }
+  .pj-btn.ok{ background:var(--vd); }
+
+  /* detalhe do projeto */
+  .det-h{ background:var(--sf); border:1px solid var(--ln); border-radius:15px; padding:15px 16px; margin-bottom:14px; }
+  .det-p{ font-family:ui-monospace,monospace; font-size:14px; font-weight:700; color:var(--vm); }
+  .det-a{ font-family:'Poppins',sans-serif; font-size:21px; font-weight:600; color:var(--tx); margin-top:3px; line-height:1.2; }
+  .det-c{ font-size:13.5px; color:var(--mut); margin-top:4px; }
+  .det-m{ display:flex; gap:16px; margin-top:12px; padding-top:12px; border-top:1px solid var(--ln); }
+  .det-m div span{ display:block; font-size:9.5px; font-weight:800; text-transform:uppercase; color:var(--mut); letter-spacing:.04em; }
+  .det-m div b{ display:block; font-size:15px; color:var(--tx); margin-top:2px; }
+
+  .sec-t{ font-size:11px; font-weight:800; letter-spacing:.09em; text-transform:uppercase;
+    color:var(--mut); margin:18px 2px 9px; }
+  .at{ display:flex; align-items:center; gap:12px; width:100%; text-align:left; background:var(--sf);
+    border:1px solid var(--ln); border-radius:14px; padding:14px 15px; margin-bottom:8px; }
+  .at:disabled{ opacity:.55; }
+  .at-d{ width:11px; height:11px; border-radius:50%; flex:0 0 11px; }
+  .at-l{ flex:1; min-width:0; }
+  .at-n{ font-size:16px; font-weight:700; color:var(--tx); }
+  .at-s{ font-size:12px; color:var(--mut); margin-top:2px; }
+  .at-set{ font-size:10px; font-weight:800; padding:2px 7px; border-radius:5px; flex:0 0 auto; }
+  .at-ch{ width:19px; height:19px; fill:none; stroke:var(--mut); stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; flex:0 0 19px; }
+
+  /* ação */
+  .aop{ background:var(--sf); border:1px solid var(--ln); border-radius:15px; padding:16px; }
+  .aop-h{ display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding-bottom:13px; border-bottom:2px solid; margin-bottom:14px; }
+  .aop-n{ font-family:ui-monospace,monospace; font-size:21px; font-weight:700; color:var(--tx); }
+  .aop-l{ font-size:9.5px; font-weight:800; text-transform:uppercase; letter-spacing:.06em; color:var(--mut); }
+  .aop-st{ display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700;
+    padding:6px 12px; border-radius:999px; white-space:nowrap; }
+  .aop-i{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
+  .aop-i div span{ display:block; font-size:9.5px; font-weight:800; text-transform:uppercase; color:var(--mut); }
+  .aop-i div b{ display:block; font-size:14.5px; color:var(--tx); margin-top:2px; }
+  .lbl{ display:block; font-size:10.5px; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--mut); margin-bottom:9px; }
+  .fgrid{ display:flex; flex-direction:column; gap:8px; margin-bottom:18px; }
+  .fb{ display:flex; align-items:center; gap:11px; font-size:16px; font-weight:600; padding:15px 16px;
+    border:1.5px solid var(--ln); border-radius:13px; background:var(--sf); color:var(--tx); text-align:left; }
+  .fb.on{ border-color:var(--vm); background:rgba(152,36,36,.06); color:var(--vm); }
+  .fb-r{ width:20px; height:20px; border-radius:50%; border:2px solid var(--ln); flex:0 0 20px; display:grid; place-items:center; }
+  .fb.on .fb-r{ border-color:var(--vm); }
+  .fb-r{ border-radius:6px; }
+  .fb.on .fb-r::after{ content:""; width:9px; height:9px; border-radius:2px; background:var(--vm); }
+  .bt{ display:flex; align-items:center; justify-content:center; gap:10px; width:100%; font-size:17px;
+    font-weight:700; padding:18px; border:0; border-radius:14px; color:#fff; }
+  .bt svg{ width:21px; height:21px; }
+  .bt:disabled{ opacity:.4; }
+  .bt-ini{ background:var(--vd); }
+  .bt-fim{ background:var(--vm); }
+  .bt-pau{ background:var(--rx); }
+  .bt-ret{ background:var(--vd); }
+  .bt-dup{ display:grid; grid-template-columns:1fr 1.5fr; gap:9px; }
+  .cx{ display:flex; align-items:center; gap:12px; border-radius:13px; padding:14px 16px; margin-bottom:14px; }
+  .cx svg{ width:24px; height:24px; flex:0 0 24px; }
+  .cx b{ display:block; font-size:14.5px; }
+  .cx span{ display:block; font-size:12.5px; margin-top:2px; opacity:.85; }
+  .cx-and{ background:#fdf6e8; color:#8a5a13; }
+  .cx-pau{ background:#f2f0f7; color:#4a4170; }
+  .cx-ok{ background:#e9f2ea; color:#2f6b39; }
+  .cx-av{ background:#fdf1dc; color:#8a5a13; }
+  .paus{ background:#faf9f5; border:1px solid var(--ln); border-radius:12px; padding:11px 13px; margin-bottom:14px; }
+  .paus-l{ display:flex; align-items:center; gap:9px; font-size:12.5px; padding:4px 0; }
+  .paus-n{ width:18px; height:18px; border-radius:50%; background:var(--rx); color:#fff; font-size:10px;
+    font-weight:700; display:grid; place-items:center; flex:0 0 18px; }
+  .paus-h{ font-family:ui-monospace,monospace; font-size:11.5px; color:var(--tx); flex:1; }
+  .paus-t{ font-weight:700; color:var(--rx); }
+  .paus-tot{ font-size:12px; color:var(--mut); margin-top:7px; padding-top:7px; border-top:1px solid var(--ln); }
+  .paus-tot b{ color:var(--rx); }
+
+  .pend{ background:#fdfaf3; border:1px solid #ecdfc4; border-radius:13px; padding:13px 14px; margin-bottom:16px; }
+  .pend-h{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:9px; }
+  .pend-h span{ font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:#8a5a13; }
+  .pend-h b{ color:var(--vm); }
+  .pend-add{ font-size:13px; font-weight:700; color:var(--vm); background:transparent; border:0; padding:4px 2px; }
+  .pend-i{ display:flex; align-items:center; gap:11px; padding:9px 0; border-top:1px solid #f0e6d2; }
+  .pend-c{ width:26px; height:26px; flex:0 0 26px; border:2px solid #d8c8a4; border-radius:8px;
+    background:#fff; display:grid; place-items:center; color:#fff; }
+  .pend-i.ok .pend-c{ background:var(--vd); border-color:var(--vd); }
+  .pend-c svg{ width:15px; height:15px; }
+  .pend-l{ flex:1; min-width:0; }
+  .pend-t{ display:block; font-size:15px; font-weight:600; color:var(--tx); line-height:1.3; }
+  .pend-i.ok .pend-t{ text-decoration:line-through; color:var(--mut); font-weight:500; }
+  .pend-m{ display:block; font-size:11px; color:var(--mut); margin-top:2px; }
+  .pend-x{ width:30px; height:30px; flex:0 0 30px; border:0; background:transparent; color:#c9c0aa; font-size:22px; line-height:1; }
+  .pend-v{ font-size:13px; color:var(--mut); padding:6px 0 2px; line-height:1.5; }
+  .vazio{ text-align:center; padding:50px 20px; color:var(--mut); }
+  .vazio svg{ width:52px; height:52px; stroke:#c9c7bd; fill:none; stroke-width:1.4; margin-bottom:12px; }
+  .vazio b{ display:block; font-size:16px; color:var(--tx); margin-bottom:5px; }
+  .vazio span{ font-size:13.5px; }
+
+  /* ===== Lead time / hora extra ===== */
+  .lt-box{ border:1px solid #c9e3d2; background:#f4faf6; border-radius:14px;
+    padding:13px 14px; margin-bottom:13px; }
+  .lt-box.atr{ border-color:#f0c9c5; background:#fdf1ef; }
+  .lt-top{ display:flex; align-items:center; gap:11px; }
+  .lt-dot{ width:12px; height:12px; border-radius:999px; background:var(--vd); flex:0 0 12px; }
+  .lt-box.atr .lt-dot{ background:#c0392b; animation:ltpisca 1s steps(1,end) infinite; }
+  @keyframes ltpisca{ 50%{ opacity:.12; } }
+  .lt-l{ flex:1; min-width:0; }
+  .lt-l b{ display:block; font-size:13.5px; color:#1f7a3d; }
+  .lt-box.atr .lt-l b{ color:#b3261e; }
+  .lt-l span{ display:block; font-size:11.5px; color:var(--mut); margin-top:2px; line-height:1.35; }
+  .lt-cr{ text-align:right; flex:0 0 auto; }
+  .lt-cr span{ display:block; font-family:ui-monospace,monospace; font-size:21px; font-weight:700;
+    color:var(--vd); line-height:1.05; font-variant-numeric:tabular-nums; }
+  .lt-box.atr .lt-cr span{ color:#c0392b; }
+  .lt-box.parado .lt-cr span{ opacity:.5; }
+  .lt-cr em{ font-style:normal; font-size:9px; font-weight:800; letter-spacing:.06em;
+    text-transform:uppercase; color:var(--mut); }
+  .lt-bar{ height:6px; background:rgba(0,0,0,.08); border-radius:999px; overflow:hidden; margin-top:9px; }
+  .lt-bar i{ display:block; height:100%; background:var(--vd); border-radius:999px; }
+  .lt-box.atr .lt-bar i{ background:#c0392b; }
+  .lt-mini{ display:inline-flex; align-items:center; gap:5px; font-family:ui-monospace,monospace;
+    font-size:11px; font-weight:700; color:#1f7a3d; white-space:nowrap; }
+  .lt-mini.atr{ color:#c0392b; }
+  .lt-mini .lt-dot{ width:7px; height:7px; flex:0 0 7px; }
+  .lt-mini.atr .lt-dot{ background:#c0392b; animation:ltpisca 1s steps(1,end) infinite; }
+  .lt-mini.parado{ opacity:.7; }
+
+  .he-box{ border:1px solid #ecdda9; background:#fdf7e6; border-radius:14px;
+    padding:13px 14px; margin-bottom:13px; }
+  .he-box.on{ border-color:#e2b8b2; background:#fdf1ef; }
+  .he-h{ display:flex; align-items:center; gap:11px; }
+  .he-h svg{ width:21px; height:21px; color:#8a6100; flex:0 0 21px;
+    fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; }
+  .he-box.on .he-h svg{ color:#b3261e; }
+  .he-l{ flex:1; min-width:0; }
+  .he-l b{ display:block; font-size:13.5px; color:#8a6100; }
+  .he-box.on .he-l b{ color:#b3261e; }
+  .he-l span{ display:block; font-size:11.5px; color:var(--mut); margin-top:2px; line-height:1.35; }
+  .he-btn{ width:100%; font:inherit; font-size:15.5px; font-weight:700; padding:14px; border:0;
+    border-radius:12px; color:#fff; background:#8a6100; margin-top:11px; }
+  .he-btn.fim{ background:#b3261e; }
+  .he-btn:active{ filter:brightness(.92); }
+  .he-res{ font-size:11.5px; color:var(--mut); border:1px solid var(--ln); background:var(--sf);
+    border-radius:12px; padding:10px 12px; margin-bottom:11px; }
+  .he-res b{ display:block; font-size:9px; font-weight:800; letter-spacing:.07em;
+    text-transform:uppercase; color:#8a6100; margin-bottom:5px; }
+  .he-res span{ display:block; }
+  .he-res i{ font-style:normal; color:#b3261e; font-weight:700; }
+  .he-res em{ display:block; font-style:normal; font-weight:700; color:var(--tx); margin-top:5px; }
+
+
+  /* ===== Abertura ===== */
+  #splash{ position:fixed; inset:0; z-index:300; background:#fff; display:grid; place-items:center;
+    padding:calc(24px + var(--sat)) 28px calc(24px + var(--sab));
+    transition:opacity .55s ease, visibility .55s; }
+  #splash.sai{ opacity:0; visibility:hidden; }
+  .sp{ text-align:center; }
+  .sp-logo{ display:block; width:min(230px,62vw); margin:0 auto;
+    opacity:0; transform:translateY(10px) scale(.965);
+    animation:spEntra .85s cubic-bezier(.2,.8,.3,1) .12s forwards; }
+  .sp-ln{ width:0; height:2px; margin:20px auto 0; background:var(--vm); border-radius:2px;
+    animation:spLinha .7s cubic-bezier(.4,0,.2,1) .62s forwards; }
+  .sp-s{ display:block; margin-top:16px; font-size:9.5px; font-weight:800; letter-spacing:.36em;
+    text-transform:uppercase; color:var(--mut); opacity:0;
+    animation:spEntra .6s ease .82s forwards; }
+  @keyframes spEntra{ to{ opacity:1; transform:none; } }
+  @keyframes spLinha{ to{ width:64px; } }
+  @media(prefers-reduced-motion:reduce){
+    .sp-logo,.sp-s{ animation:none; opacity:1; transform:none; }
+    .sp-ln{ animation:none; width:64px; }
+  }
+
+  .toast{ position:fixed; left:14px; right:14px; bottom:calc(18px + var(--sab)); background:var(--tx); color:#fff;
+    font-size:14.5px; font-weight:600; padding:15px 18px; border-radius:13px; opacity:0; pointer-events:none;
+    transition:opacity .22s,transform .22s; transform:translateY(14px); z-index:99; text-align:center; }
+  .toast.on{ opacity:1; transform:translateY(0); }
+  .off{ position:fixed; top:var(--sat); left:0; right:0; background:var(--vm); color:#fff; font-size:12.5px;
+    font-weight:600; text-align:center; padding:7px; z-index:100; display:none; }
+  .off.on{ display:block; }
+</style>
+</head>
+<body>
+
+<section id="splash">
+  <div class="sp">
+    <img class="sp-logo" src="https://i.postimg.cc/ZKKbdCCF/image-removebg-preview-(18).png" alt="Raldi"
+      onerror="this.onerror=null;this.src='https://i.postimg.cc/9MsBrnJd/app-icone.png';this.style.width='96px';this.style.borderRadius='22px'">
+    <div class="sp-ln"></div>
+    <span class="sp-s">Apontamento</span>
+  </div>
+</section>
+
+<section class="tela on" id="login">
+  <div class="lg">
+    <img class="lg-ic" src="https://i.postimg.cc/9MsBrnJd/app-icone.png" alt="Raldi">
+    <div class="lg-t">Raldi Apontar</div>
+    <div class="lg-s">Chão de fábrica</div>
+    <form class="lg-form" id="loginForm" onsubmit="entrar(); return false;">
+      <div class="lg-f"><label for="em">E-mail</label>
+        <input id="em" name="username" type="email" autocomplete="username" inputmode="email"
+          placeholder="seu@email.com" autocapitalize="off" spellcheck="false" required></div>
+      <div class="lg-f"><label for="se">Senha</label>
+        <input id="se" name="password" type="password" autocomplete="current-password" placeholder="••••••••" required></div>
+      <div class="lg-e" id="lgErr"></div>
+      <button class="lg-b" id="lgBtn" type="submit">Entrar</button>
+    </form>
+    <div class="lg-d" id="lgDiag"></div>
+  </div>
+</section>
+
+<section class="tela" id="app">
+  <header class="topo" id="topo"></header>
+  <main class="corpo" id="v"></main>
+</section>
+
+<div class="off" id="off">Sem conexão — será enviado ao reconectar</div>
+<div class="toast" id="toast"></div>
+
+<script>
+  firebase.initializeApp({
+    apiKey:"AIzaSyAvvGRa0w5k0mOAmac0IFriGHj0Z1M2gLk",
+    authDomain:"raldi-sistemav1.firebaseapp.com",
+    databaseURL:"https://raldi-sistemav1-default-rtdb.firebaseio.com",
+    projectId:"raldi-sistemav1",
+    storageBucket:"raldi-sistemav1.firebasestorage.app",
+    messagingSenderId:"983595967299",
+    appId:"1:983595967299:web:381a4effa3289a7ff385f6"
+  });
+  const auth=firebase.auth(), db=firebase.database();
+  const persist=auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(e=>console.warn(e));
+  const v=document.getElementById('v'), topo=document.getElementById('topo');
+
+  let PAINEL=[], EQUIPE=[], OPS=[], CONTADORES={};
+  let vista='lista', regAtual=null, opAtual=null, funcSel=[], busca='', filtro='', funcLista=[];
+
+  /* ---- setores e status (idênticos aos outros sistemas) ---- */
+  const OP_SETORES={
+    APOIO:{sigla:'APOIO',nome:'Áreas de Apoio',tipo:'digital',cor:'#7a6ea8',
+      atividades:['Medição técnica','Liberado do PCP','Agrupamento do lote']},
+    SL:{sigla:'SL',nome:'Sublinha',tipo:'lote',cor:'#2f6fb5',atividades:['Corte','Laminado','Usinagem']},
+    LP:{sigla:'LP',nome:'Linha Principal',tipo:'produto',cor:'#c77d1a',atividades:['Montagem','Pintura']},
+    EXP:{sigla:'EXP',nome:'Expedição',tipo:'digital',cor:'#2f8f46',atividades:['Expedição','Montagem externa']}
+  };
+  const ST_OP={ nao:{label:'Não iniciada',cor:'#c0392b'}, parcial:{label:'Em andamento',cor:'#d4930d'},
+    pausada:{label:'Pausada',cor:'#7a6ea8'}, encerrada:{label:'Encerrada',cor:'#2f8f46'} };
+
+  /* ---- Hora extra: sessões declaradas pelo operador ---- */
+  function iniciarExtra(id){
+    const o=OPS.find(x=>x.id===id); if(!o) return;
+    if(stOp(o)==='nao'){ toast('Inicie a OP antes de apontar hora extra'); return; }
+    if(stOp(o)==='encerrada'){ toast('Esta OP já está encerrada'); return; }
+    if(extraAberta(o)){ toast('Já existe hora extra em andamento'); return; }
+    const agora=new Date();
+    if(!foraJornada(agora,o.jornada) &&
+       !confirm('Agora está DENTRO da jornada ('+fmtJornada(o.jornada)+').\n\nIniciar hora extra mesmo assim?')) return;
+    const l=extrasDe(o).slice();
+    l.push({de:agora.toISOString(),ate:null,por:usuarioAtual(),funcs:funcsDe(o,'inicio')});
+    db.ref('ops/'+id).update({extras:l, extra:true, foraExpediente:true})
+      .then(()=>toast('Hora extra iniciada às '+agora.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})))
+      .catch(e=>toast('Erro: '+e.message));
+  }
+  function finalizarExtra(id){
+    const o=OPS.find(x=>x.id===id); if(!o) return;
+    const ab=extraAberta(o); if(!ab){ toast('Não há hora extra em andamento'); return; }
+    const agoraISO=new Date().toISOString();
+    const l=extrasDe(o).map(s=>(s.de===ab.de&&!s.ate)?Object.assign({},s,{ate:agoraISO}):s);
+    const min=tempoExtraOP({...o,extras:l},agoraISO);
+    db.ref('ops/'+id).update({extras:l, tempoExtraMin:min})
+      .then(()=>toast('Hora extra finalizada — '+fmtMin(min)+' no total'))
+      .catch(e=>toast('Erro: '+e.message));
+  }
+  function htmlExtraResumo(o){
+    const l=extrasDe(o); if(!l.length) return '';
+    return `<div class="he-res"><b>Hora extra</b>
+      ${l.map((s,i)=>`<span>${i+1}. ${fmtHora(s.de)} → ${s.ate?fmtHora(s.ate):'<i>em curso</i>'}</span>`).join('')}
+      <em>Total ${fmtMin(tempoExtraOP(o))}</em></div>`;
+  }
+  function htmlExtra(o){
+    const st=stOp(o);
+    if(st==='nao'||st==='encerrada') return htmlExtraResumo(o);
+    const ab=extraAberta(o), agora=new Date(), fora=foraJornada(agora,o.jornada);
+    if(!ab && !fora) return htmlExtraResumo(o);
+    const min=tempoExtraOP(o);
+    return `${htmlExtraResumo(o)}
+      <div class="he-box ${ab?'on':''}">
+        <div class="he-h">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          <div class="he-l"><b>${ab?'Hora extra em andamento':'Fora da jornada'}</b>
+            <span>${ab
+              ? ('Desde '+fmtHora(ab.de)+(min?' · '+fmtMin(min)+' acumulados':''))
+              : (motivoFora(agora,o.jornada)+' · agora '+agora.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}))}</span></div>
+        </div>
+        ${ab?`<button class="he-btn fim" onclick="finalizarExtra('${o.id}')">Finalizar hora extra</button>`
+            :`<button class="he-btn ini" onclick="iniciarExtra('${o.id}')">Iniciar hora extra</button>`}
+      </div>`;
+  }
+
+  // selo compacto do lead time para listas
+  function htmlLeadMini(o){
+    const L=leadStatus(o); if(!L) return '';
+    return `<span class="lt-mini ${L.atrasado?'atr':''} ${L.rodando?'':'parado'}">`
+      +`<i class="lt-dot"></i><span data-lt-op="${o.id}">${fmtCron(L.restSeg)}</span></span>`;
+  }
+  function htmlLead(o){
+    const L=leadStatus(o); if(!L) return '';
+    return `<div class="lt-box ${L.atrasado?'atr':''} ${L.rodando?'':'parado'}">
+      <div class="lt-top">
+        <span class="lt-dot"></span>
+        <div class="lt-l"><b>${L.atrasado?'Lead time estourado':'Dentro do lead time'}</b>
+          <span>Prazo ${fmtMin(L.leadMin)} · realizado ${fmtMin(Math.round(L.gastoMin))}${L.st==='pausada'?' · OP pausada, cronômetro parado':''}</span></div>
+        <div class="lt-cr"><span data-lt-op="${o.id}">${fmtCron(L.restSeg)}</span>
+          <em>${L.atrasado?'de atraso':'restante'}</em></div>
+      </div>
+      <div class="lt-bar"><i style="width:${L.pct}%"></i></div>
+    </div>`;
+  }
+
+  function opSetorDe(s){ return OP_SETORES[s]||OP_SETORES.SL; }
+
+  /* ===== Motor de tempo (jornada, intervalos, feriados, hora extra) ===== */
+  const JORNADA_PADRAO={ ini:'07:30', fim:'18:00', dias:[1,2,3,4,5],
+    intervalos:[{de:'09:00',ate:'09:15'},{de:'12:00',ate:'13:30'},{de:'16:00',ate:'16:15'}] };
+  // Sábado, domingo e feriado: o dia inteiro é hora extra.
+  // Segunda a sexta: tudo que fica antes da abertura e depois do fechamento da jornada.
+  // Sem recorte de horário — trabalho de madrugada e virada de dia contam.
+  const HE_JANELA={ ini:'00:00', fim:'24:00' };
+  let FERIADOS={};                                 // {'2026-12-25':{data,nome}}
+
+  function jhm(s){ const [h,m]=String(s||'0:0').split(':').map(Number); return (h||0)*60+(m||0); }
+  function jmin(d){ return d.getHours()*60+d.getMinutes()+d.getSeconds()/60; }
+  function jdia(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+  function jover(a1,a2,b1,b2){ return Math.max(0, Math.min(a2,b2)-Math.max(a1,b1)); }
+  function ehFeriado(d){ return !!FERIADOS[jdia(d)]; }
+  // aceita jornadas antigas (intIni/intFim) e novas (intervalos[])
+  function intervalosDe(j){
+    if(j && j.semIntervalo) return [];                       // jornada sem parada declarada
+    if(j && Array.isArray(j.intervalos) && j.intervalos.length) return j.intervalos;
+    if(j && j.intervalos && typeof j.intervalos==='object') return Object.values(j.intervalos);
+    if(j && j.intIni && j.intFim) return [{de:j.intIni,ate:j.intFim}];
+    return JORNADA_PADRAO.intervalos;
+  }
+  function diasDe(j){ return (j && j.dias && j.dias.length)?j.dias:JORNADA_PADRAO.dias; }
+  function ehDiaUtil(d,j){ return diasDe(j).includes(d.getDay()) && !ehFeriado(d); }
+
+  // percorre dia a dia entre duas datas e soma minutos de cada janela
+  function percorre(iniISO,fimISO,j,fn){
+    const ini=new Date(iniISO), fim=new Date(fimISO);
+    if(!(fim>ini)) return 0;
+    let total=0,g=0;
+    const cur=new Date(ini.getFullYear(),ini.getMonth(),ini.getDate());
+    const ult=new Date(fim.getFullYear(),fim.getMonth(),fim.getDate());
+    while(cur<=ult && g++<400){
+      const mi=jdia(cur)===jdia(ini), mf=jdia(cur)===jdia(fim);
+      const a=mi?jmin(ini):0, b=mf?jmin(fim):1440;
+      total+=fn(cur,a,b);
+      cur.setDate(cur.getDate()+1);
+    }
+    return total;
+  }
+  // arredonda só quando o chamador não pediu o valor exato (cronômetro do lead time)
+  function _rd(exato,v){ return exato?v:Math.round(v); }
+  // minutos DENTRO da jornada (dia útil, fora dos intervalos)
+  function tempoTrabalhado(iniISO,fimISO,j,exato){
+    j=j||JORNADA_PADRAO;
+    const jI=jhm(j.ini||JORNADA_PADRAO.ini), jF=jhm(j.fim||JORNADA_PADRAO.fim);
+    const ints=intervalosDe(j);
+    return _rd(exato,percorre(iniISO,fimISO,j,(dia,a,b)=>{
+      if(!ehDiaUtil(dia,j)) return 0;
+      let t=jover(a,b,jI,jF);
+      ints.forEach(iv=>{ t-=jover(Math.max(a,jI),Math.min(b,jF),jhm(iv.de),jhm(iv.ate)); });
+      return Math.max(0,t);
+    }));
+  }
+  // minutos FORA da jornada, dentro da janela de hora extra
+  function tempoHoraExtra(iniISO,fimISO,j,exato){
+    j=j||JORNADA_PADRAO;
+    const jI=jhm(j.ini||JORNADA_PADRAO.ini), jF=jhm(j.fim||JORNADA_PADRAO.fim);
+    const hI=jhm(HE_JANELA.ini), hF=jhm(HE_JANELA.fim);
+    return _rd(exato,percorre(iniISO,fimISO,j,(dia,a,b)=>{
+      const janela=jover(a,b,hI,hF);
+      if(!janela) return 0;
+      if(!ehDiaUtil(dia,j)) return janela;              // sábado, domingo ou feriado: tudo é extra
+      return Math.max(0, janela - jover(a,b,jI,jF));    // antes de abrir e depois de fechar
+    }));
+  }
+  /* Fora da jornada = antes de abrir, depois de fechar, ou dia não trabalhado.
+     Diferente de dentroExpediente(): o intervalo de almoço NÃO é hora extra. */
+  function foraJornada(dt,j){
+    j=j||JORNADA_PADRAO;
+    if(!ehDiaUtil(dt,j)) return true;
+    const m=jmin(dt);
+    return m<jhm(j.ini||JORNADA_PADRAO.ini) || m>=jhm(j.fim||JORNADA_PADRAO.fim);
+  }
+  function dentroExpediente(dt,j){
+    j=j||JORNADA_PADRAO;
+    if(!ehDiaUtil(dt,j)) return false;
+    const m=jmin(dt);
+    if(m<jhm(j.ini||JORNADA_PADRAO.ini)||m>jhm(j.fim||JORNADA_PADRAO.fim)) return false;
+    return !intervalosDe(j).some(iv=>m>jhm(iv.de)&&m<jhm(iv.ate));
+  }
+  function motivoFora(dt,j){
+    j=j||JORNADA_PADRAO;
+    if(ehFeriado(dt)) return 'feriado ('+(FERIADOS[jdia(dt)].nome||'')+')';
+    if(!diasDe(j).includes(dt.getDay())) return dt.getDay()===0?'domingo':'sábado';
+    const m=jmin(dt);
+    if(m<jhm(j.ini||JORNADA_PADRAO.ini)) return 'antes do expediente';
+    if(m>jhm(j.fim||JORNADA_PADRAO.fim)) return 'depois do expediente';
+    const iv=intervalosDe(j).find(x=>m>jhm(x.de)&&m<jhm(x.ate));
+    return iv?('intervalo '+iv.de+'–'+iv.ate):'fora do expediente';
+  }
+  function fmtMin(m){
+    if(!m||m<=0) return '0min';
+    const h=Math.floor(m/60), r=Math.round(m%60);
+    return (h?h+'h':'')+(r?(h?' ':'')+r+'min':(h?'':'0min'));
+  }
+  function fmtJornada(j){
+    j=j||JORNADA_PADRAO;
+    const ints=intervalosDe(j);
+    return (j.ini||JORNADA_PADRAO.ini)+'–'+(j.fim||JORNADA_PADRAO.fim)+
+      ' · int. '+(ints.length?ints.map(i=>i.de+'–'+i.ate).join(', '):'sem intervalo');
+  }
+
+
+  /* ===== Funcionários da OP (um ou vários) ===== */
+  function funcsDe(o,fase){
+    const f=o&&o[fase];
+    if(!f) return [];
+    if(Array.isArray(f.funcs)&&f.funcs.length) return f.funcs;
+    if(f.funcs&&typeof f.funcs==='object'){ const v=Object.values(f.funcs); if(v.length) return v; }
+    return f.func?[f.func]:[];
+  }
+  function nomesFuncs(o,fase){ const l=funcsDe(o,fase); return l.length?l.join(', '):''; }
+  function funcResumo(o,fase){
+    const l=funcsDe(o,fase);
+    if(!l.length) return '';
+    return l.length===1?l[0]:(l[0]+' +'+(l.length-1));
+  }
+  function equipeOP(o){
+    const s=new Set([...funcsDe(o,'inicio'),...funcsDe(o,'fim')]);
+    return [...s];
+  }
+
+  /* ===== Feriados ===== */
+  function listaFeriados(){ return Object.values(FERIADOS).sort((a,b)=>String(a.data).localeCompare(String(b.data))); }
+  function addFeriado(data,nome){
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(data)){ toast('Data inválida'); return Promise.reject(); }
+    return db.ref('feriados/'+data).set({data,nome:(nome||'').trim()||'Feriado',
+      criadoEm:new Date().toISOString(),criadoPor:usuarioAtual()});
+  }
+  function delFeriado(data){ return db.ref('feriados/'+data).remove(); }
+
+
+  /* ===== Tempo da OP: normal + hora extra + pausas ===== */
+  // hora extra só conta quando a OP foi explicitamente marcada como extra
+  function tempoNormalOP(o,ate,exato){
+    if(!o||!o.inicio||!o.inicio.em) return 0;
+    const f=ate||(o.fim&&o.fim.em)||new Date().toISOString();
+    const bruto=tempoTrabalhado(o.inicio.em,f,o.jornada,true);
+    const pausado=pausasDe(o).reduce((a,p)=>a+((p&&p.de)?tempoTrabalhado(p.de,p.ate||f,o.jornada,true):0),0);
+    return _rd(exato,Math.max(0,bruto-pausado));
+  }
+  /* ===== Hora extra por SESSÃO =============================================
+     extras: [{de:ISO, ate:ISO|null, por, funcs}]
+     O operador declara a hora extra pelos botões "Iniciar / Finalizar hora
+     extra" na tela de apontamento. Só o tempo dentro de uma sessão declarada
+     (e fora da jornada) conta como extra; pausas abertas nesse intervalo são
+     descontadas. OPs antigas, marcadas apenas com o.extra=true, continuam
+     valendo pelo caminho de compatibilidade no fim da função.               */
+  function extrasDe(o){ const e=o&&o.extras; return e?(Array.isArray(e)?e:Object.values(e)):[]; }
+  function extraAberta(o){ return extrasDe(o).find(e=>e&&e.de&&!e.ate)||null; }
+  function tempoExtraOP(o,ate,exato){
+    if(!o||!o.inicio||!o.inicio.em) return 0;
+    const f=ate||(o.fim&&o.fim.em)||new Date().toISOString();
+    const ss=extrasDe(o);
+    if(ss.length){
+      let t=0;
+      ss.forEach(s=>{
+        if(!s||!s.de) return;
+        const sf=s.ate||f;
+        if(!(sf>s.de)) return;
+        let b=tempoHoraExtra(s.de,sf,o.jornada,true);
+        pausasDe(o).forEach(p=>{
+          if(!p||!p.de) return;
+          const pa=p.ate||f;
+          const pi=(p.de>s.de)?p.de:s.de, pf=(pa<sf)?pa:sf;
+          if(pf>pi) b-=tempoHoraExtra(pi,pf,o.jornada,true);
+        });
+        t+=Math.max(0,b);
+      });
+      return _rd(exato,t);
+    }
+    if(!o.extra) return 0;
+    const bruto=tempoHoraExtra(o.inicio.em,f,o.jornada,true);
+    const pausado=pausasDe(o).reduce((a,p)=>a+((p&&p.de)?tempoHoraExtra(p.de,p.ate||f,o.jornada,true):0),0);
+    return _rd(exato,Math.max(0,bruto-pausado));
+  }
+  function tempoTotalOP(o,ate,exato){
+    const t=tempoNormalOP(o,ate,true)+tempoExtraOP(o,ate,true);
+    return _rd(exato,t);
+  }
+
+
+  /* ===================== LEAD TIME =========================================
+     Banco: leadtimes/{projeto}/{atividade} = {projeto,atividade,setor,horas,por,em}
+     Cadastro OPCIONAL e por projeto — só as atividades que precisam de prazo.
+     O cronômetro anda sobre o tempo TRABALHADO da OP (tempoTotalOP), então ele
+     pausa junto com a OP e congela fora do expediente, sem código extra.     */
+  let LEADS={};
+  function ltSlug(s){
+    return String(s||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+      .replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'')||'_';
+  }
+  function leadHoras(projeto,atividade){
+    const p=LEADS[ltSlug(projeto)]; if(!p) return null;
+    const r=p[ltSlug(atividade)];
+    const h=r?Number(r.horas):NaN;
+    return (isFinite(h)&&h>0)?h:null;
+  }
+  // OP de lote vale para vários projetos: usa o maior prazo cadastrado entre eles
+  function leadMinOP(o){
+    if(!o||!o.atividade) return null;
+    const projs=(o.tipo==='lote'&&(o.projetosLote||[]).length)
+      ? (o.projetosLote||[]).map(r=>r&&r.projeto) : [o.projeto];
+    let h=null;
+    projs.filter(Boolean).forEach(p=>{ const v=leadHoras(p,o.atividade); if(v!=null) h=(h==null?v:Math.max(h,v)); });
+    if(h!=null) return Math.round(h*60);
+    // OP encerrada guarda o prazo que valia na época — o histórico não é reescrito
+    const g=Number(o.leadMin);
+    return (o.status==='encerrada'&&isFinite(g)&&g>0)?g:null;
+  }
+  function leadStatus(o){
+    const lm=leadMinOP(o); if(lm==null||lm<=0) return null;
+    const st=stOp(o);
+    const ate=(st==='encerrada'&&o.fim&&o.fim.em)?o.fim.em:new Date().toISOString();
+    const gasto=(st==='nao')?0:tempoTotalOP(o,ate,true);
+    const restSeg=Math.round((lm-gasto)*60);
+    return {leadMin:lm, gastoMin:gasto, restSeg, atrasado:restSeg<0,
+      pct:Math.max(0,Math.min(100,Math.round(gasto/lm*100))), st, rodando:st==='parcial'};
+  }
+  function fmtCron(seg){
+    const n=Math.abs(Math.round(seg));
+    const h=Math.floor(n/3600), m=Math.floor((n%3600)/60), s=n%60;
+    return (seg<0?'-':'')+h+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  }
+  // atualiza só os nós do cronômetro — nunca re-renderiza a tela a cada segundo
+  function tickLead(){
+    const els=document.querySelectorAll('[data-lt-op]');
+    for(let i=0;i<els.length;i++){
+      const el=els[i];
+      const o=OPS.find(x=>x.id===el.getAttribute('data-lt-op')); if(!o) continue;
+      const L=leadStatus(o); if(!L) continue;
+      el.textContent=fmtCron(L.restSeg);
+      const box=el.closest('.lt-box')||el.closest('.lt-mini');
+      if(box){ box.classList.toggle('atr',L.atrasado); box.classList.toggle('parado',!L.rodando); }
+      const bar=box&&box.querySelector('.lt-bar i');
+      if(bar){ bar.style.width=L.pct+'%'; }
+    }
+  }
+  setInterval(tickLead,1000);
+
+  function stOp(o){ return (o&&ST_OP[o.status])?o.status:'nao'; }
+  function esc(x){ return x==null?'':String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function usuarioAtual(){ return (auth.currentUser&&auth.currentUser.email)||'desconhecido'; }
+  function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('on');
+    clearTimeout(window._t); window._t=setTimeout(()=>t.classList.remove('on'),2600); }
+
+  /* ---- tempo (mesma lógica dos outros sistemas) ---- */
+  function fmtHora(iso){ if(!iso) return '—'; const d=new Date(iso); if(isNaN(d)) return '—';
+    return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}); }
+
+  /* ---- pausa ---- */
+  function pausasDe(o){ const p=o&&o.pausas; return p?(Array.isArray(p)?p:Object.values(p)):[]; }
+  function pausaAberta(o){ return pausasDe(o).find(p=>p&&p.de&&!p.ate)||null; }
+  function minutosPausados(o,ate){ const f=ate||new Date().toISOString();
+    return pausasDe(o).reduce((a,p)=>a+((p&&p.de)?tempoTrabalhado(p.de,p.ate||f,o.jornada):0),0); }
+  function tempoLiquido(o,ate){ return tempoTotalOP(o,ate); }
+
+  /* ---- progresso ---- */
+  function todasAtividades(){ return Object.values(OP_SETORES)
+    .flatMap(S=>S.atividades.map(a=>({setor:S.sigla,atividade:a,porLote:S.tipo==='lote'}))); }
+  function opDa(reg,a){
+    return a.porLote
+      ? OPS.find(o=>o.atividade===a.atividade&&String(o.lote).trim()===String(reg.lote||'').trim())
+      : OPS.find(o=>o.atividade===a.atividade&&String(o.projeto).trim()===String(reg.projeto||'').trim());
+  }
+  function progresso(reg){
+    const ativs=todasAtividades(), passo=100/ativs.length;
+    let pct=0, andando=0, pausadas=0;
+    const det=ativs.map(a=>{ const op=opDa(reg,a), st=op?stOp(op):'nao';
+      if(st==='encerrada') pct+=passo; else if(st==='parcial'||st==='pausada') pct+=passo/2;
+      if(st==='parcial') andando++; if(st==='pausada') pausadas++;
+      return {...a,op,status:st}; });
+    pct=Math.round(pct);
+    return {pct,det,andando,pausadas,
+      cor: pct>=100?'var(--vd)':(pausadas?'var(--rx)':(pct>0?'var(--am)':'#c0c0b8'))};
+  }
+  function aptosPara(at,setor){ return EQUIPE.filter(f=>(f.atividades||[]).includes(at)
+    ||((f.setores||[]).includes(setor)&&!(f.atividades||[]).length)); }
+
+  /* ===== TELA 1 — lista de projetos ===== */
+  function irLista(){ vista='lista'; regAtual=null; opAtual=null; render(); }
+  function render(){
+    if(vista==='lista'){
+      // sincronização do Firebase não pode arrancar o teclado de quem está digitando
+      const f=document.activeElement;
+      if(f && f.id==='buscaIn' && document.getElementById('pjLista')){
+        document.getElementById('pjLista').innerHTML=htmlProjetos();
+        return;
+      }
+      return telaLista();
+    }
+    if(vista==='projeto') return telaProjeto();
+    if(vista==='op') return telaOP();
+  }
+  function telaLista(){
+    topo.innerHTML=`<img src="https://i.postimg.cc/9MsBrnJd/app-icone.png" alt="">
+      <div class="topo-t"><b>Raldi Apontar</b><span id="tm"></span></div>
+      <button class="topo-b" onclick="sair()"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></button>`;
+    const tm=document.getElementById('tm'); if(tm) tm.textContent=usuarioAtual();
+    const nAnd=PAINEL.filter(r=>progresso(r).andando>0).length;
+    const nPau=PAINEL.filter(r=>progresso(r).pausadas>0).length;
+    v.innerHTML=`
+      <div class="busca"><svg viewBox="0 0 24 24" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="buscaIn" value="${esc(busca)}" placeholder="Buscar projeto, lote ou cliente..." inputmode="search"
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+          oninput="busca=this.value; listaFiltrar()">
+        <button class="busca-x" id="buscaX" ${busca?'':'hidden'} onclick="limparBusca()">&times;</button></div>
+      <div class="filtros" id="fchips">
+        <button class="fchip ${filtro===''?'on':''}" onclick="filtro='';listaFiltrar(1)">Todos <b>${PAINEL.length}</b></button>
+        <button class="fchip ${filtro==='abr'?'on':''}" onclick="filtro='abr';listaFiltrar(1)">Em aberto</button>
+        <button class="fchip ${filtro==='and'?'on':''}" onclick="filtro='and';listaFiltrar(1)">Em andamento ${nAnd?'<b>'+nAnd+'</b>':''}</button>
+        <button class="fchip ${filtro==='pau'?'on':''}" onclick="filtro='pau';listaFiltrar(1)">Pausadas ${nPau?'<b>'+nPau+'</b>':''}</button>
+      </div>
+      <div id="pjLista">${htmlProjetos()}</div>`;
+  }
+  /* A lista é o único pedaço que muda ao digitar ou filtrar. Trocar a tela
+     inteira arrancava o campo do DOM e o teclado fechava a cada letra. */
+  function listaFiltrar(mexeChips){
+    const el=document.getElementById('pjLista');
+    if(!el) return render();
+    el.innerHTML=htmlProjetos();
+    if(mexeChips){
+      const cs=document.querySelectorAll('#fchips .fchip');
+      const ordem=['','abr','and','pau'];
+      cs.forEach((c,i)=>c.classList.toggle('on',ordem[i]===filtro));
+    }
+    const x=document.getElementById('buscaX');
+    if(x) x.hidden=!busca;   // só liga/desliga o X: nada é reconstruído enquanto se digita
+  }
+  function limparBusca(){
+    busca='';
+    const i=document.getElementById('buscaIn');
+    if(i){ i.value=''; i.focus(); }
+    listaFiltrar();
+  }
+  function htmlProjetos(){
+    const q=busca.trim().toLowerCase(), t=q?q.split(/\s+/):[];
+    let lista=PAINEL.map(r=>({r,p:progresso(r)}));
+    if(filtro==='and') lista=lista.filter(x=>x.p.andando>0);
+    else if(filtro==='pau') lista=lista.filter(x=>x.p.pausadas>0);
+    else if(filtro==='abr') lista=lista.filter(x=>x.p.pct<100);
+    if(t.length) lista=lista.filter(x=>t.every(y=>
+      [x.r.projeto,x.r.lote,x.r.cliente,x.r.ambiente,x.r.consultor].filter(Boolean).join(' ').toLowerCase().includes(y)));
+    return `${lista.length?lista.map(({r,p})=>`
+        <div class="pj">
+          <div class="pj-l" onclick="abrirProjeto('${r.id}')">
+            <div class="pj-h"><span class="pj-p">${esc(r.projeto)||'—'}</span>
+              ${r.lote?`<span class="pj-lo">Lote ${esc(r.lote)}</span>`:''}</div>
+            <div class="pj-a">${esc(r.ambiente)||'—'}</div>
+            <div class="pj-c">${esc(r.cliente)||'—'}</div>
+            <div class="pj-b"><div class="pj-bar"><i style="width:${p.pct}%;background:${p.cor}"></i></div>
+              <span class="pj-pct" style="color:${p.cor}">${p.pct}%</span></div>
+          </div>
+          <button class="pj-btn ${p.pausadas?'pau':(p.andando?'and':(p.pct>=100?'ok':''))}" onclick="abrirProjeto('${r.id}')">
+            ${p.pausadas?'Pausado':(p.andando?'Andando':'Conferir')}</button>
+        </div>`).join('')
+      :`<div class="vazio"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6M9 13h6M9 17h3"/></svg>
+        <b>${PAINEL.length?'Nada encontrado':'Nenhum projeto'}</b>
+        <span>${PAINEL.length?'Ajuste a busca ou o filtro.':'Os projetos cadastrados no PCP aparecem aqui.'}</span></div>`}`;
+  }
+
+  /* ===== TELA 2 — atividades do projeto ===== */
+  function abrirProjeto(id){ regAtual=id; vista='projeto'; render(); window.scrollTo(0,0); }
+  function telaProjeto(){
+    const r=PAINEL.find(x=>x.id===regAtual); if(!r) return irLista();
+    const p=progresso(r);
+    topo.innerHTML=`<button class="voltar" onclick="irLista()">
+      <svg viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>Projetos</button>`;
+    const porSetor=Object.values(OP_SETORES).map(S=>({S,itens:p.det.filter(d=>d.setor===S.sigla)}));
+    v.innerHTML=`
+      <div class="det-h">
+        <div class="det-p">${esc(r.projeto)||'—'}${r.lote?' · Lote '+esc(r.lote):''}</div>
+        <div class="det-a">${esc(r.ambiente)||'—'}</div>
+        <div class="det-c">${esc(r.cliente)||'—'}${r.consultor?' · '+esc(r.consultor):''}</div>
+        <div class="det-m">
+          <div><span>Conclusão</span><b style="color:${p.cor}">${p.pct}%</b></div>
+          <div><span>Concluídas</span><b>${p.det.filter(d=>d.status==='encerrada').length}/${p.det.length}</b></div>
+          ${p.andando?`<div><span>Em andamento</span><b style="color:var(--am)">${p.andando}</b></div>`:''}
+          ${p.pausadas?`<div><span>Pausadas</span><b style="color:var(--rx)">${p.pausadas}</b></div>`:''}
+        </div>
+      </div>
+      ${porSetor.map(({S,itens})=>`
+        <div class="sec-t" style="color:${S.cor}">${S.sigla} — ${esc(S.nome)}</div>
+        ${itens.map(d=>{ const st=ST_OP[d.status], o=d.op;
+          const tempo=o&&o.tempoMin?fmtMin(o.tempoMin):(o&&o.inicio?fmtMin(tempoLiquido(o)):'');
+          const quem=o?(funcResumo(o,'fim')||funcResumo(o,'inicio')):'';
+          return `<button class="at" ${o?'':'disabled'} onclick="${o?`abrirOP('${o.id}')`:''}">
+            <span class="at-d" style="background:${st.cor}"></span>
+            <span class="at-l"><span class="at-n">${esc(d.atividade)}</span>
+              <span class="at-s">${o?(st.label+(quem?' · '+esc(quem):'')+(tempo?' · '+tempo:'')):'OP não emitida'}</span>
+              ${o?htmlLeadMini(o):''}</span>
+            ${d.porLote?`<span class="at-set" style="background:${S.cor}22;color:${S.cor}">LOTE</span>`:''}
+            ${o?'<svg class="at-ch" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>':''}
+          </button>`;}).join('')}`).join('')}`;
+  }
+
+  /* ===== TELA 3 — apontar ===== */
+  function abrirOP(id){ opAtual=id; vista='op'; funcSel=[]; render(); window.scrollTo(0,0); }
+  function telaOP(){
+    const o=OPS.find(x=>x.id===opAtual); if(!o) return irLista();
+    const st=stOp(o), sv=ST_OP[st], S=opSetorDe(o.setor);
+    const aptos=aptosPara(o.atividade,o.setor);
+    funcLista=(stOp(o)==='nao')?aptos:(aptos.length?aptos:equipeOP(o).map(n=>({nome:n})));
+    if(stOp(o)!=='nao'&&!funcSel.length) funcSel=funcsDe(o,'inicio').slice();
+    const agora=new Date(), fora=!dentroExpediente(agora,o.jornada);
+    const dec=o.inicio&&!o.fim?tempoLiquido(o,agora.toISOString()):0;
+    const pausas=pausasDe(o);
+    topo.innerHTML=`<button class="voltar" onclick="abrirProjeto('${regAtual}')">
+      <svg viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>Atividades</button>`;
+    v.innerHTML=`<div class="aop">
+      <div class="aop-h" style="border-color:${sv.cor}">
+        <div><span class="aop-l">Ordem de Produção</span><div class="aop-n">${esc(o.numero)}</div></div>
+        <div class="aop-st" style="background:${sv.cor}18;color:${sv.cor}">
+          <span class="at-d" style="background:${sv.cor}"></span>${sv.label}</div>
+      </div>
+      <div class="aop-i">
+        <div><span>Atividade</span><b>${esc(o.atividade)}</b></div>
+        <div><span>Setor</span><b style="color:${S.cor}">${esc(o.setor)}</b></div>
+        <div><span>Projeto</span><b>${esc(o.projeto)||'—'}</b></div>
+        <div><span>Lote</span><b>${esc(o.lote)||'—'}</b></div>
+      </div>
+
+      ${o.tipo==='lote'&&(o.projetosLote||[]).length>1?`<div class="cx cx-av">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+        <div><b>OP de lote</b><span>Vale para ${(o.projetosLote||[]).length} projetos do lote ${esc(o.lote)}.</span></div></div>`:''}
+
+      ${fora?`<div class="cx cx-av">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        <div><b>Fora do expediente</b><span>${motivoFora(agora,o.jornada)} · agora ${agora.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</span></div></div>`:''}
+
+      ${htmlLead(o)}
+      ${htmlExtra(o)}
+
+      ${pausas.length?`<div class="paus">
+        ${pausas.map((pp,i)=>`<div class="paus-l"><span class="paus-n">${i+1}</span>
+          <span class="paus-h">${fmtHora(pp.de)} → ${pp.ate?fmtHora(pp.ate):'<b>agora</b>'}</span>
+          <span class="paus-t">${fmtMin(tempoTrabalhado(pp.de,pp.ate||new Date().toISOString(),o.jornada))}</span></div>`).join('')}
+        <div class="paus-tot">Total pausado <b>${fmtMin(minutosPausados(o))}</b></div></div>`:''}
+
+      ${htmlPend(o)}
+
+      ${st==='nao'?`
+        <span class="lbl">Quem vai executar?</span>
+        ${aptos.length?`<div class="fgrid">${aptos.map((f,i)=>
+          `<button type="button" class="fb ${funcSel.includes(f.nome)?'on':''}" onclick="selFunc(${i})">
+            <span class="fb-r"></span>${esc(f.nome)}</button>`).join('')}</div>
+          ${funcSel.length>1?`<p style="font-size:12.5px;color:var(--mut);margin:-8px 0 14px">${funcSel.length} pessoas nesta atividade</p>`:''}`
+        :`<div class="cx cx-av"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+          <div><b>Ninguém cadastrado</b><span>Cadastre alguém para ${esc(o.atividade)} na Equipe Produtiva.</span></div></div>`}
+        <button class="bt bt-ini" ${funcSel.length?'':'disabled'} onclick="iniciar()">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Iniciar atividade</button>`
+      :st==='pausada'?`
+        <div class="cx cx-pau"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+          <div><b>Pausada</b><span>Tempo até a pausa: ${fmtMin(dec)} · por ${esc(nomesFuncs(o,'inicio'))}</span></div></div>
+        <button class="bt bt-ret" onclick="retomar()">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Retomar</button>`
+      :st==='parcial'?`
+        <div class="cx cx-and"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          <div><b>${fmtMin(dec)} trabalhados</b><span>Iniciada por ${esc(nomesFuncs(o,'inicio'))} às ${fmtHora(o.inicio.em)}</span></div></div>
+        <span class="lbl">Quem está encerrando?</span>
+        <div class="fgrid">${funcLista.map((f,i)=>
+          `<button type="button" class="fb ${funcSel.includes(f.nome)?'on':''}" onclick="selFunc(${i})">
+            <span class="fb-r"></span>${esc(f.nome)}</button>`).join('')}</div>
+        <div class="bt-dup">
+          <button class="bt bt-pau" onclick="pausar()"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>Pausar</button>
+          <button class="bt bt-fim" onclick="encerrar()"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="1.5"/></svg>Encerrar</button>
+        </div>`
+      :`<div class="cx cx-ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 7"/></svg>
+          <div><b>Encerrada — ${fmtMin(o.tempoMin)}</b>
+          <span>${esc(nomesFuncs(o,'fim')||nomesFuncs(o,'inicio'))} · ${fmtHora(o.fim&&o.fim.em)}${o.tempoPausaMin?' · pausada '+fmtMin(o.tempoPausaMin):''}</span></div></div>
+        <button class="bt" style="background:var(--mut)" onclick="abrirProjeto('${regAtual}')">Voltar às atividades</button>`}
+    </div>`;
+  }
+
+  function selFunc(i){ const f=funcLista[i]; if(!f) return;
+    const k=funcSel.indexOf(f.nome); if(k>=0) funcSel.splice(k,1); else funcSel.push(f.nome); render(); }
+
+  /* ---- pendências (montagem externa / expedição) ---- */
+  const ATIV_PEND=['Montagem externa','Expedição'];
+  function pendsDe(o){ const p=o&&o.pendencias; return p?(Array.isArray(p)?p:Object.values(p)):[]; }
+  function addPend(){
+    const o=OPS.find(x=>x.id===opAtual); if(!o) return;
+    const t=prompt('Nova pendência:',''); if(t===null) return;
+    const txt=(t||'').trim(); if(!txt) return;
+    const l=pendsDe(o).slice();
+    l.push({id:'p'+Date.now(),texto:txt,ok:false,por:usuarioAtual(),em:new Date().toISOString()});
+    db.ref('ops/'+o.id+'/pendencias').set(l).then(()=>toast('Pendência adicionada')).catch(e=>toast('Erro: '+e.message));
+  }
+  function togPend(i){
+    const o=OPS.find(x=>x.id===opAtual); if(!o) return;
+    const l=pendsDe(o).map((p,k)=>k===i?{...p,ok:!p.ok,
+      okPor:!p.ok?usuarioAtual():null, okEm:!p.ok?new Date().toISOString():null}:p);
+    db.ref('ops/'+o.id+'/pendencias').set(l).catch(e=>toast('Erro: '+e.message));
+  }
+  function delPend(i){
+    const o=OPS.find(x=>x.id===opAtual); if(!o) return;
+    const l=pendsDe(o); if(!confirm('Remover "'+l[i].texto+'"?')) return;
+    db.ref('ops/'+o.id+'/pendencias').set(l.filter((_,k)=>k!==i))
+      .then(()=>toast('Removida')).catch(e=>toast('Erro: '+e.message));
+  }
+  function htmlPend(o){
+    if(!ATIV_PEND.includes(o.atividade)) return '';
+    const l=pendsDe(o), ab=l.filter(p=>!p.ok).length;
+    return `<div class="pend">
+      <div class="pend-h"><span>Pendências${ab?` · <b>${ab} em aberto</b>`:''}</span>
+        <button class="pend-add" onclick="addPend()">+ Adicionar</button></div>
+      ${l.length?l.map((p,i)=>`<div class="pend-i ${p.ok?'ok':''}">
+        <button class="pend-c" onclick="togPend(${i})">${p.ok?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 7"/></svg>':''}</button>
+        <div class="pend-l"><span class="pend-t">${esc(p.texto)}</span>
+          <span class="pend-m">${p.ok?('Feito por '+esc((p.okPor||'').split('@')[0])):('Anotado por '+esc((p.por||'').split('@')[0]))}</span></div>
+        <button class="pend-x" onclick="delPend(${i})">&times;</button>
+      </div>`).join(''):'<p class="pend-v">Nenhuma pendência. Anote o que ficou faltando para quem vier depois.</p>'}
+    </div>`;
+  }
+
+  /* ---- ações ---- */
+  function confFora(o){ const a=new Date();
+    if(dentroExpediente(a,o.jornada)) return true;
+    return confirm('Fora do expediente ('+motivoFora(a,o.jornada)+').\n\n'+fmtJornada(o.jornada)+
+      '\nAgora: '+a.toLocaleString('pt-BR')+'\n\nContinuar?'); }
+  function iniciar(){
+    const o=OPS.find(x=>x.id===opAtual); if(!o||!funcSel.length) return;
+    if(stOp(o)!=='nao'){ toast('Esta OP já foi iniciada'); return; }
+    const a=new Date();
+    if(!confFora(o)) return;
+    const fora=!dentroExpediente(a,o.jornada);
+    // fora da jornada a sessão de hora extra abre junto — encerra pelo botão da tela
+    const he=foraJornada(a,o.jornada);
+    const aISO=a.toISOString();
+    const upd={status:'parcial',
+      inicio:{funcs:funcSel.slice(),func:funcSel[0],em:aISO,por:usuarioAtual(),fora},
+      foraExpediente:fora||!!o.foraExpediente,
+      extra:he||!!o.extra};
+    if(he) upd.extras=extrasDe(o).concat([{de:aISO,ate:null,por:usuarioAtual(),funcs:funcSel.slice()}]);
+    const lm=leadMinOP(o); if(lm!=null) upd.leadMin=lm;
+    db.ref('ops/'+o.id).update(upd)
+      .then(()=>toast('Iniciada'+(he?' em hora extra':'')+' — '+funcSel.join(', ')))
+      .catch(e=>toast('Erro: '+e.message));
+  }
+  function pausar(){
+    const o=OPS.find(x=>x.id===opAtual); if(!o) return;
+    if(stOp(o)!=='parcial'){ toast('Só é possível pausar OP em andamento'); return; }
+    const m=prompt('Motivo da pausa (opcional):',''); if(m===null) return;
+    const lista=pausasDe(o).slice();
+    lista.push({de:new Date().toISOString(),ate:null,motivo:(m||'').trim(),
+      func:(o.inicio&&o.inicio.func)||'',por:usuarioAtual()});
+    db.ref('ops/'+o.id).update({status:'pausada',pausas:lista})
+      .then(()=>toast('Pausada — o tempo parou')).catch(e=>toast('Erro: '+e.message));
+  }
+  function retomar(){
+    const o=OPS.find(x=>x.id===opAtual); if(!o) return;
+    const ab=pausaAberta(o); if(!ab){ toast('Não está pausada'); return; }
+    const a=new Date().toISOString();
+    const lista=pausasDe(o).map(p=>(p.de===ab.de&&!p.ate)?{...p,ate:a}:p);
+    db.ref('ops/'+o.id).update({status:'parcial',pausas:lista})
+      .then(()=>toast('Retomada')).catch(e=>toast('Erro: '+e.message));
+  }
+  function encerrar(){
+    const o=OPS.find(x=>x.id===opAtual); if(!o) return;
+    if(!['parcial','pausada'].includes(stOp(o))){ toast('OP não está em andamento'); return; }
+    if(!confFora(o)) return;
+    const lista=funcSel.length?funcSel.slice():funcsDe(o,'inicio');
+    const a=new Date(), aISO=a.toISOString();
+    if(!confirm('Encerrar a OP '+o.numero+'?\n\n'+o.atividade+'\nExecutante(s): '+lista.join(', '))) return;
+    const fora=!dentroExpediente(a,o.jornada);
+    const pl=pausasDe(o).map(p=>(p.de&&!p.ate)?{...p,ate:aISO}:p);
+    const xl=extrasDe(o).map(s=>(s.de&&!s.ate)?{...s,ate:aISO}:s);   // fecha hora extra aberta
+    const tmp={...o,pausas:pl,extras:xl};
+    const norm=tempoNormalOP(tmp,aISO), ext=tempoExtraOP(tmp,aISO), pau=minutosPausados(tmp,aISO);
+    const lm=leadMinOP(o);
+    db.ref('ops/'+o.id).update({status:'encerrada',
+      fim:{funcs:lista,func:lista[0]||'',em:aISO,por:usuarioAtual(),fora}, pausas:pl,
+      tempoMin:norm+ext, tempoNormalMin:norm, tempoExtraMin:ext, tempoPausaMin:pau,
+      foraExpediente:fora||!!o.foraExpediente,
+      ...(xl.length?{extras:xl}:{}),
+      ...(lm!=null?{leadMin:lm, leadDesvioMin:(norm+ext)-lm}:{})})
+      .then(()=>toast('Encerrada — '+fmtMin(norm+ext)+(ext?' ('+fmtMin(ext)+' extra)':'')
+        +(lm!=null?((norm+ext)>lm?' · ATRASO '+fmtMin((norm+ext)-lm):' · no prazo'):'')))
+      .catch(e=>toast('Erro: '+e.message));
+  }
+
+  /* ---- sync ---- */
+  let ligados=false;
+  function ligar(){
+    if(ligados) return; ligados=true;
+    db.ref('painel').on('value',s=>{ PAINEL=Object.values(s.val()||{}).sort((a,b)=>(a.ordem||0)-(b.ordem||0)); render(); });
+    db.ref('equipe').on('value',s=>{ EQUIPE=Object.values(s.val()||{}).sort((a,b)=>String(a.nome||'').localeCompare(String(b.nome||''))); render(); });
+    db.ref('ops').on('value',s=>{ OPS=Object.values(s.val()||{}); render(); });
+    db.ref('contadores').on('value',s=>{ CONTADORES=s.val()||{}; });
+    db.ref('leadtimes').on('value',s=>{ LEADS=s.val()||{}; render(); });
+    db.ref('feriados').on('value',s=>{ FERIADOS=s.val()||{}; if(typeof render==='function'&&TELA==null) render(); });
+    db.ref('.info/connected').on('value',s=>{ document.getElementById('off').classList.toggle('on',s.val()===false); });
+  }
+
+  /* ---- auth ---- */
+  function erro(m){ document.getElementById('lgErr').textContent=m||''; }
+  function traduz(c){
+    const m={'auth/invalid-email':'E-mail inválido.','auth/user-not-found':'Usuário não encontrado.',
+      'auth/wrong-password':'Senha incorreta.','auth/invalid-credential':'E-mail ou senha incorretos.',
+      'auth/too-many-requests':'Muitas tentativas. Aguarde alguns minutos.',
+      'auth/network-request-failed':'Sem conexão com a internet.','auth/user-disabled':'Usuário desativado.',
+      'auth/unauthorized-domain':'DOM'};
+    if(m[c]==='DOM') return 'Domínio não autorizado: '+location.hostname;
+    return m[c]||('Não foi possível entrar. ('+(c||'?')+')'); }
+  function entrar(){
+    const e=(document.getElementById('em').value||'').trim(), s=document.getElementById('se').value||'';
+    if(!e||!s){ erro('Preencha e-mail e senha.'); return; }
+    const b=document.getElementById('lgBtn'); b.disabled=true; b.textContent='Entrando...'; erro('');
+    persist.then(()=>auth.signInWithEmailAndPassword(e,s))
+      .catch(x=>erro(traduz(x.code)))
+      .finally(()=>{ b.disabled=false; b.textContent='Entrar'; });
+  }
+  function sair(){ if(confirm('Sair do aplicativo?')) auth.signOut(); }
+  function mostrar(id){ ['login','app'].forEach(x=>document.getElementById(x).classList.toggle('on',x===id)); }
+  function diag(){
+    const d=document.getElementById('lgDiag');
+    if(location.protocol==='file:'){ d.className='lg-d err';
+      d.innerHTML='<b>Arquivo aberto direto do celular.</b>O login só funciona por https. Acesse pelo endereço publicado.';
+      const b=document.getElementById('lgBtn'); b.disabled=true; b.textContent='Indisponível'; return; }
+    d.className='lg-d ok'; d.textContent='Conectado · '+location.hostname;
+  }
+  setTimeout(diag,150);
+  // Abertura: a logo fica no ar o tempo do Firebase decidir se já existe sessão,
+  // com um piso de 1,5s para não dar um flash feio, e um teto de 4s se a rede travar.
+  (function(){
+    const sp=document.getElementById('splash'); if(!sp) return;
+    const t0=Date.now(); let saiu=false;
+    function sair(){
+      if(saiu) return; saiu=true;
+      const espera=Math.max(0,1500-(Date.now()-t0));
+      setTimeout(()=>{ sp.classList.add('sai'); setTimeout(()=>sp.remove(),700); },espera);
+    }
+    auth.onAuthStateChanged(()=>sair());
+    setTimeout(sair,4000);
+  })();
+
+  auth.onAuthStateChanged(u=>{
+    if(u){ ligar(); mostrar('app'); irLista(); }
+    else{ const f=document.getElementById('loginForm'); if(f) f.reset(); mostrar('login'); }
+  });
+  // atualiza o tempo em curso a cada minuto
+  setInterval(()=>{ if(vista==='op'||vista==='projeto') render(); },60000);
+
+  Object.assign(window,{entrar,sair,render,irLista,listaFiltrar,htmlProjetos,limparBusca,abrirProjeto,abrirOP,iniciar,pausar,retomar,encerrar,selFunc,diag,addPend,togPend,delPend,
+    iniciarExtra,finalizarExtra,htmlLead,htmlLeadMini,htmlExtra,leadStatus,leadMinOP,fmtCron,tickLead});
+
+  // ===== PWA: service worker (instalação e atualização automática) =====
+  if('serviceWorker' in navigator){
+    window.addEventListener('load',()=>{
+      navigator.serviceWorker.register('./sw.js').then(reg=>{
+        reg.addEventListener('updatefound',()=>{
+          const nv=reg.installing;
+          if(nv) nv.addEventListener('statechange',()=>{
+            if(nv.state==='installed'&&navigator.serviceWorker.controller) nv.postMessage({tipo:'ativar'});
+          });
+        });
+      }).catch(err=>console.warn('SW não registrado:',err));
+    });
+    navigator.serviceWorker.addEventListener('controllerchange',()=>{
+      if(window.__recarregando) return; window.__recarregando=true; location.reload();
+    });
+  }
+</script>
+</body>
+</html>
