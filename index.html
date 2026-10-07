@@ -281,6 +281,103 @@
   .off{ position:fixed; top:var(--sat); left:0; right:0; background:var(--vm); color:#fff; font-size:12.5px;
     font-weight:600; text-align:center; padding:7px; z-index:100; display:none; }
   .off.on{ display:block; }
+
+  /* ===== Barra inferior (Projetos · Ler OP · Kanban) ===== */
+  .tabs{ display:none; flex:0 0 auto; align-items:flex-end; justify-content:space-around; background:var(--sf);
+    border-top:1px solid var(--ln); padding:6px 10px calc(6px + var(--sab)); }
+  .tabs.on{ display:flex; }
+  .tab{ flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; font-size:11px; font-weight:700;
+    color:var(--mut); background:none; border:0; padding:6px 0; position:relative; }
+  .tab svg{ width:23px; height:23px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .tab.on{ color:var(--vm); }
+  .tab-n{ position:absolute; top:1px; left:calc(50% + 6px); min-width:18px; height:18px; padding:0 5px; border-radius:999px;
+    background:var(--am); color:#fff; font-size:10.5px; font-weight:800; line-height:18px; text-align:center; }
+  .tab-n:empty{ display:none; }
+  .tab-cam{ flex:0 0 auto; width:62px; height:62px; margin:-24px 8px 0; border-radius:50%; border:4px solid var(--bg);
+    background:var(--vm); color:#fff; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 6px 16px rgba(152,36,36,.38); }
+  .tab-cam svg{ width:27px; height:27px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .tab-cam:active{ transform:scale(.95); }
+  body.com-tabs .toast{ bottom:calc(84px + var(--sab)); }
+
+  /* ===== Kanban (Em andamento agora) ===== */
+  .kb-res{ font-size:12.5px; color:var(--mut); margin:0 2px 10px; }
+  .kb-res b{ color:var(--tx); }
+  .kb-nav{ display:flex; gap:7px; overflow-x:auto; margin:0 -14px 12px; padding:0 14px 3px; scrollbar-width:none; }
+  .kb-nav::-webkit-scrollbar{ display:none; }
+  .kb-chip{ flex:0 0 auto; display:flex; align-items:center; gap:7px; font-size:12.5px; font-weight:600; padding:7px 12px;
+    border:1px solid var(--ln); border-radius:999px; background:var(--sf); color:var(--tx); }
+  .kb-chip i{ width:8px; height:8px; border-radius:99px; background:var(--sc,var(--vm)); }
+  .kb-chip b{ font-size:11px; background:rgba(44,45,49,.09); padding:1px 7px; border-radius:999px; }
+  .kb-chip.on{ background:var(--tx); border-color:var(--tx); color:#fff; }
+  .kb-chip.on b{ background:rgba(255,255,255,.22); }
+  .kb{ position:relative; display:flex; gap:11px; overflow-x:auto; margin:0 -14px; padding:0 14px 10px;
+    scroll-snap-type:x mandatory; scroll-padding:0 14px; align-items:flex-start; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+  .kb::-webkit-scrollbar{ display:none; }
+  .kb-col{ flex:0 0 84%; max-width:340px; scroll-snap-align:start; background:#e8e7df; border:1px solid var(--ln); border-radius:14px; }
+  .kb-col.fila{ border-style:dashed; background:#eeede6; }
+  .kb-h{ padding:10px 13px 11px; border-bottom:2px solid var(--sc,var(--vm)); border-radius:13px 13px 0 0; }
+  .kb-g{ font-size:9.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--sc,var(--mut)); margin-bottom:2px; }
+  .kb-l{ display:flex; align-items:center; justify-content:space-between; gap:8px; font-weight:700; font-size:15px; }
+  .kb-q{ font-size:11.5px; font-weight:800; background:rgba(44,45,49,.09); padding:2px 9px; border-radius:999px; }
+  .kb-b{ padding:9px; display:flex; flex-direction:column; gap:8px; }
+  .kb-vz{ font-size:12.5px; color:var(--mut); text-align:center; padding:16px 8px; }
+  .kc{ display:block; width:100%; text-align:left; font:inherit; color:inherit; background:var(--sf); border:1px solid var(--ln);
+    border-left:4px solid var(--sc,var(--am)); border-radius:11px; padding:11px 12px; }
+  button.kc:active{ transform:scale(.985); }
+  .kc.pau{ opacity:.75; }
+  .kc.fl{ cursor:default; }
+  .kc-t{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .kc-n{ font-family:ui-monospace,monospace; font-weight:700; font-size:14.5px; color:var(--vm); }
+  .kc-pill{ font-size:9.5px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; color:var(--mut);
+    background:rgba(44,45,49,.08); padding:2px 8px; border-radius:999px; }
+  .kc-cli{ font-size:13px; font-weight:600; margin-top:4px; }
+  .kc-f{ font-size:12px; color:var(--mut); margin-top:3px; }
+  .kc-tm{ display:flex; align-items:center; flex-wrap:wrap; gap:9px; font-size:18px; font-weight:800; color:var(--am); margin-top:7px; }
+  .kc-dica{ font-size:11.5px; font-weight:700; color:var(--vm); margin-top:6px; }
+
+  /* ===== Folha inferior (detalhe do lote) ===== */
+  .sheet{ position:fixed; inset:0; z-index:70; background:rgba(0,0,0,.45); display:none; align-items:flex-end; }
+  .sheet.on{ display:flex; }
+  .sheet-c{ width:100%; max-height:82%; display:flex; flex-direction:column; background:var(--bg);
+    border-radius:20px 20px 0 0; padding-bottom:var(--sab); }
+  .sheet-h{ display:flex; align-items:center; justify-content:space-between; padding:16px 18px 10px; font-size:17px; font-weight:800; }
+  .sheet-x{ width:34px; height:34px; border:0; border-radius:10px; background:rgba(44,45,49,.08); font-size:22px; line-height:1; color:var(--tx); }
+  .sheet-b{ overflow-y:auto; padding:0 16px 18px; -webkit-overflow-scrolling:touch; }
+  .lf{ background:var(--sf); border:1px solid var(--ln); border-left:4px solid #5b7c99; border-radius:12px; padding:11px 13px; margin-bottom:9px; }
+  .lf-n{ font-family:ui-monospace,monospace; font-weight:700; font-size:14.5px; color:var(--vm); }
+  .lf-c{ font-weight:700; font-size:14px; margin-top:3px; }
+  .lf ul{ margin:6px 0 0; padding-left:18px; font-size:13.5px; }
+  .lf-r{ font-size:12.5px; color:var(--mut); margin:0 2px 10px; }
+
+  /* ===== Leitor de câmera ===== */
+  .scan{ position:fixed; inset:0; z-index:80; background:#000; display:none; flex-direction:column; }
+  .scan.on{ display:flex; }
+  .scan-top{ display:flex; align-items:center; justify-content:space-between; gap:10px; color:#fff;
+    padding:calc(12px + var(--sat)) 16px 12px; background:#111; }
+  .scan-top b{ font-family:'Poppins',sans-serif; font-size:16px; font-weight:600; }
+  .scan-bs{ display:flex; gap:8px; }
+  .scan-bt{ min-width:40px; height:40px; padding:0 12px; border:0; border-radius:11px; background:rgba(255,255,255,.16);
+    color:#fff; font-size:13px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+  .scan-bt.on{ background:var(--am); }
+  .scan-bt[hidden]{ display:none; }
+  .scan-vid{ flex:1; position:relative; overflow:hidden; }
+  .scan-vid video{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .scan-mira{ position:absolute; left:7%; right:7%; top:50%; height:24%; transform:translateY(-50%);
+    border:2px solid rgba(255,255,255,.9); border-radius:14px; box-shadow:0 0 0 100vmax rgba(0,0,0,.5); }
+  .scan-mira::after{ content:''; position:absolute; left:8px; right:8px; top:50%; height:2px; background:#ff4b4b;
+    box-shadow:0 0 8px #ff4b4b; animation:scanLinha 1.6s ease-in-out infinite alternate; }
+  @keyframes scanLinha{ from{ transform:translateY(-34px); } to{ transform:translateY(34px); } }
+  @media(prefers-reduced-motion:reduce){ .scan-mira::after{ animation:none; } }
+  .scan-msg{ position:absolute; left:14px; right:14px; bottom:14px; text-align:center; font-size:14px; font-weight:700;
+    color:#fff; background:rgba(0,0,0,.62); padding:11px 14px; border-radius:12px; }
+  .scan-msg.err{ background:rgba(192,57,43,.92); }
+  .scan-man{ display:flex; gap:8px; padding:12px 16px calc(14px + var(--sab)); background:#111; }
+  .scan-man input{ flex:1; min-width:0; font-size:17px; padding:13px 14px; border:1.5px solid rgba(255,255,255,.2);
+    border-radius:12px; background:rgba(255,255,255,.08); color:#fff; }
+  .scan-man input::placeholder{ color:rgba(255,255,255,.35); }
+  .scan-man input:focus{ outline:0; border-color:var(--vm); }
+  .scan-man button{ font-size:16px; font-weight:700; padding:0 20px; border:0; border-radius:12px; background:var(--vm); color:#fff; }
 </style>
 </head>
 <body>
@@ -315,8 +412,32 @@
 <section class="tela" id="app">
   <header class="topo" id="topo"></header>
   <main class="corpo" id="v"></main>
+  <nav class="tabs" id="tabs">
+    <button class="tab" data-tab="lista" onclick="irLista()">
+      <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6M9 13h6M9 17h3"/></svg>Projetos</button>
+    <button class="tab-cam" onclick="abrirScanner()" aria-label="Ler código da OP com a câmera">
+      <svg viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 8v8M10 8v8M13 8v8M17 8v8"/></svg></button>
+    <button class="tab" data-tab="kanban" onclick="irKanban()">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="10" y="4" width="5" height="10" rx="1.5"/><rect x="17" y="4" width="4" height="13" rx="1.5"/></svg>Kanban
+      <span class="tab-n" id="tabN"></span></button>
+  </nav>
 </section>
 
+<div class="scan" id="scan">
+  <div class="scan-top"><b>Ler código da OP</b>
+    <div class="scan-bs">
+      <button class="scan-bt" id="scanTorch" onclick="scanLanterna()" hidden aria-label="Lanterna">Luz</button>
+      <button class="scan-bt" onclick="fecharScanner()" aria-label="Fechar">&times;</button></div></div>
+  <div class="scan-vid"><video id="scanVid" playsinline muted autoplay></video><div class="scan-mira"></div>
+    <div class="scan-msg" id="scanMsg">Aponte para o código de barras da OP</div></div>
+  <div class="scan-man"><input id="scanNum" inputmode="numeric" autocomplete="off" placeholder="ou digite o nº da OP"
+    onkeydown="if(event.key==='Enter'){event.preventDefault();scanManual();}">
+    <button onclick="scanManual()">Abrir</button></div>
+</div>
+<div class="sheet" id="sheet" onclick="if(event.target===this)fecharSheet()">
+  <div class="sheet-c"><div class="sheet-h"><span id="sheetT"></span><button class="sheet-x" onclick="fecharSheet()">&times;</button></div>
+    <div class="sheet-b" id="sheetB"></div></div>
+</div>
 <div class="off" id="off">Sem conexão — será enviado ao reconectar</div>
 <div class="toast" id="toast"></div>
 
@@ -336,6 +457,7 @@
 
   let PAINEL=[], EQUIPE=[], OPS=[], CONTADORES={};
   let vista='lista', regAtual=null, opAtual=null, funcSel=[], busca='', filtro='', funcLista=[];
+  let origem='projeto', abaAtual='lista';   // de onde a OP foi aberta / última aba principal
 
   /* ---- setores e status (idênticos aos outros sistemas) ---- */
   const OP_SETORES={
@@ -702,8 +824,31 @@
     ||((f.setores||[]).includes(setor)&&!(f.atividades||[]).length)); }
 
   /* ===== TELA 1 — lista de projetos ===== */
-  function irLista(){ vista='lista'; regAtual=null; opAtual=null; render(); }
+  function irLista(){ vista='lista'; abaAtual='lista'; regAtual=null; opAtual=null; render(); }
+  function irKanban(){ vista='kanban'; abaAtual='kanban'; regAtual=null; opAtual=null; render(); window.scrollTo(0,0); }
+  function irAba(){ return abaAtual==='kanban'?irKanban():irLista(); }
+  function topoPrincipal(){
+    topo.innerHTML=`<img src="https://i.postimg.cc/9MsBrnJd/app-icone.png" alt="">
+      <div class="topo-t"><b>Raldi Apontar</b><span id="tm"></span></div>
+      <button class="topo-b" onclick="sair()"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></button>`;
+    const tm=document.getElementById('tm'); if(tm) tm.textContent=usuarioAtual();
+  }
+  function atualizarTabs(){
+    const t=document.getElementById('tabs'); if(!t) return;
+    const on=(vista==='lista'||vista==='kanban');
+    t.classList.toggle('on',on); document.body.classList.toggle('com-tabs',on);
+    t.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.tab===vista));
+    const n=OPS.filter(o=>['parcial','pausada'].includes(stOp(o))).length;
+    const bn=document.getElementById('tabN'); if(bn) bn.textContent=n?String(n):'';
+  }
+  function voltarOP(){
+    if(origem==='projeto' && regAtual && PAINEL.some(x=>x.id===regAtual)) return abrirProjeto(regAtual);
+    return irAba();
+  }
+  function rotuloVoltar(){ return (origem==='projeto'&&regAtual)?'Atividades':(abaAtual==='kanban'?'Kanban':'Projetos'); }
   function render(){
+    atualizarTabs();
+    if(vista==='kanban') return telaKanban();
     if(vista==='lista'){
       // sincronização do Firebase não pode arrancar o teclado de quem está digitando
       const f=document.activeElement;
@@ -717,10 +862,7 @@
     if(vista==='op') return telaOP();
   }
   function telaLista(){
-    topo.innerHTML=`<img src="https://i.postimg.cc/9MsBrnJd/app-icone.png" alt="">
-      <div class="topo-t"><b>Raldi Apontar</b><span id="tm"></span></div>
-      <button class="topo-b" onclick="sair()"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></button>`;
-    const tm=document.getElementById('tm'); if(tm) tm.textContent=usuarioAtual();
+    topoPrincipal();
     const nAnd=PAINEL.filter(r=>progresso(r).andando>0).length;
     const nPau=PAINEL.filter(r=>progresso(r).pausadas>0).length;
     v.innerHTML=`
@@ -819,9 +961,9 @@
   }
 
   /* ===== TELA 3 — apontar ===== */
-  function abrirOP(id){ opAtual=id; vista='op'; funcSel=[]; render(); window.scrollTo(0,0); }
+  function abrirOP(id,org){ origem=org||'projeto'; opAtual=id; vista='op'; funcSel=[]; render(); window.scrollTo(0,0); }
   function telaOP(){
-    const o=OPS.find(x=>x.id===opAtual); if(!o) return irLista();
+    const o=OPS.find(x=>x.id===opAtual); if(!o) return irAba();
     const st=stOp(o), sv=ST_OP[st], S=opSetorDe(o.setor);
     const aptos=aptosPara(o.atividade,o.setor);
     funcLista=(stOp(o)==='nao')?aptos:(aptos.length?aptos:equipeOP(o).map(n=>({nome:n})));
@@ -829,8 +971,8 @@
     const agora=new Date(), fora=!dentroExpediente(agora,o.jornada);
     const dec=o.inicio&&!o.fim?tempoLiquido(o,agora.toISOString()):0;
     const pausas=pausasDe(o);
-    topo.innerHTML=`<button class="voltar" onclick="abrirProjeto('${regAtual}')">
-      <svg viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>Atividades</button>`;
+    topo.innerHTML=`<button class="voltar" onclick="voltarOP()">
+      <svg viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>${rotuloVoltar()}</button>`;
     v.innerHTML=`<div class="aop">
       <div class="aop-h" style="border-color:${sv.cor}">
         <div><span class="aop-l">Ordem de Produção</span><div class="aop-n">${esc(o.numero)}</div></div>
@@ -892,7 +1034,7 @@
       :`<div class="cx cx-ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 7"/></svg>
           <div><b>Encerrada — ${fmtMin(o.tempoMin)}</b>
           <span>${esc(nomesFuncs(o,'fim')||nomesFuncs(o,'inicio'))} · ${fmtHora(o.fim&&o.fim.em)}${o.tempoPausaMin?' · pausada '+fmtMin(o.tempoPausaMin):''}</span></div></div>
-        <button class="bt" style="background:var(--mut)" onclick="abrirProjeto('${regAtual}')">Voltar às atividades</button>`}
+        <button class="bt" style="background:var(--mut)" onclick="voltarOP()">${origem==='projeto'&&regAtual?'Voltar às atividades':'Voltar'}</button>`}
     </div>`;
   }
 
@@ -1003,6 +1145,324 @@
       .catch(e=>toast('Erro: '+e.message));
   }
 
+  /* ===== KANBAN — "Em andamento agora" (mesma lógica do PCP > Apontamento do sistema do PC) ===== */
+  const COR_FILA='#5b7c99';
+  function filaHa(iso){
+    if(!iso) return '';
+    const m=Math.floor((Date.now()-new Date(iso).getTime())/60000);
+    if(isNaN(m)||m<0) return '';
+    if(m<60) return 'há '+m+' min';
+    if(m<1440) return 'há '+Math.floor(m/60)+' h';
+    return 'há '+Math.floor(m/1440)+' d';
+  }
+  function opClienteAmbiente(o){
+    const pl=o.projetosLote||[]; if(!pl.length) return '';
+    if(o.tipo==='lote'){
+      if(pl.length===1) return [pl[0].cliente,pl[0].ambiente].filter(Boolean).join(' · ');
+      return pl.length+' projetos do lote';
+    }
+    return [pl[0].cliente,pl[0].ambiente].filter(Boolean).join(' · ');
+  }
+  // OPs de apoio podem ser emitidas sem lote. Sem lote na OP, usa o lote de outra OP do mesmo projeto.
+  function loteDaOP(o){
+    const l=String(o.lote||'').trim(); if(l) return l;
+    const p=String(o.projeto||'').trim(); if(!p) return '';
+    const v=OPS.find(x=>String(x.projeto||'').trim()===p && String(x.lote||'').trim());
+    return v?String(v.lote).trim():'';
+  }
+  // LOTES AGRUPADOS: entra quando a OP "Agrupamento do lote" é encerrada; sai quando alguma OP de "Corte" do lote inicia.
+  function lotesAgrupadosFila(){
+    const porLote=new Map();
+    OPS.filter(o=>o.atividade==='Agrupamento do lote').forEach(o=>{
+      const l=loteDaOP(o); if(!l) return;
+      const g=porLote.get(l)||{lote:l,total:0,feitas:0,em:null,projs:new Set()};
+      g.total++;
+      if(o.projeto) g.projs.add(String(o.projeto).trim());
+      if(stOp(o)==='encerrada'){ g.feitas++; const em=o.fim&&o.fim.em; if(em&&(!g.em||em<g.em)) g.em=em; }
+      porLote.set(l,g);
+    });
+    const corteIniciado=new Set(OPS.filter(o=>o.atividade==='Corte'&&stOp(o)!=='nao').map(o=>String(o.lote||'').trim()));
+    return [...porLote.values()].filter(g=>g.feitas>0 && !corteIniciado.has(g.lote))
+      .sort((a,b)=>String(a.em||'').localeCompare(String(b.em||'')));
+  }
+  // NO ROLETE: entra quando a "Usinagem" do lote é encerrada (1 card por projeto); sai quando a "Montagem" do projeto inicia.
+  function roleteFila(){
+    const porLote=new Map();
+    OPS.forEach(o=>{ const l=String(o.lote||'').trim(); if(!l) return;
+      if(!porLote.has(l)) porLote.set(l,[]); porLote.get(l).push(o); });
+    const montagemIniciada=new Set(OPS.filter(o=>o.atividade==='Montagem'&&stOp(o)!=='nao').map(o=>String(o.projeto||'').trim()));
+    const out=[];
+    porLote.forEach((ops,lote)=>{
+      const usin=ops.filter(o=>o.atividade==='Usinagem'&&stOp(o)==='encerrada')
+        .sort((a,b)=>String(a.fim&&a.fim.em||'').localeCompare(String(b.fim&&b.fim.em||'')))[0];
+      if(!usin) return;
+      const projs=new Map();
+      const add=r=>{ const p=String(r.projeto||'').trim(); if(!p) return;
+        const x=projs.get(p)||{projeto:p,clientes:new Set(),ambientes:new Set()};
+        if(r.cliente) x.clientes.add(r.cliente); if(r.ambiente) x.ambientes.add(r.ambiente);
+        projs.set(p,x); };
+      (usin.projetosLote||[]).forEach(add);
+      ops.forEach(o=>{ const p=String(o.projeto||'').trim(); if(!p) return;
+        const rs=(o.projetosLote||[]).filter(r=>String(r.projeto||'').trim()===p);
+        if(rs.length) rs.forEach(add); else add({projeto:p}); });
+      projs.forEach(x=>{ if(!montagemIniciada.has(x.projeto)) out.push({projeto:x.projeto,lote,
+        clientes:[...x.clientes], ambientes:[...x.ambientes], em:usin.fim&&usin.fim.em}); });
+    });
+    return out.sort((a,b)=>String(a.em||'').localeCompare(String(b.em||''))||String(a.projeto).localeCompare(String(b.projeto)));
+  }
+
+  // monta a lista de colunas na ordem do fluxo (APOIO → Lotes agrupados → SL → No rolete → LP → EXP)
+  function kbColunas(){
+    const andando=OPS.filter(o=>['parcial','pausada'].includes(stOp(o)));
+    const cols=[];
+    Object.values(OP_SETORES).forEach(S=>{
+      const doSetor=andando.filter(o=>o.setor===S.sigla);
+      const ativs=[...new Set([...S.atividades,...doSetor.map(o=>o.atividade)])];
+      ativs.forEach(at=>{
+        const l=doSetor.filter(o=>o.atividade===at)
+          .sort((a,b)=>String((a.inicio&&a.inicio.em)||'').localeCompare(String((b.inicio&&b.inicio.em)||'')));
+        if(l.length) cols.push({tipo:'op',grupo:S.nome,nome:at,cor:S.cor,itens:l});
+      });
+      if(S.sigla==='APOIO') cols.push({tipo:'agrupados',grupo:'Fila · sem apontamento',nome:'Lotes agrupados',cor:COR_FILA,itens:lotesAgrupadosFila()});
+      if(S.sigla==='SL')    cols.push({tipo:'rolete',grupo:'Fila · sem apontamento',nome:'No rolete',cor:COR_FILA,itens:roleteFila()});
+    });
+    return cols;
+  }
+  function kbCard(o,cor){
+    const pausada=stOp(o)==='pausada', cli=opClienteAmbiente(o);
+    return `<button class="kc ${pausada?'pau':''}" style="--sc:${cor}" onclick="abrirOP('${o.id}','kanban')">
+      <div class="kc-t"><span class="kc-n">${esc(o.numero)}</span>${pausada?'<span class="kc-pill">pausada</span>':''}</div>
+      ${cli?`<div class="kc-cli">${esc(cli)}</div>`:''}
+      <div class="kc-f">${esc(funcResumo(o,'inicio'))} · desde ${fmtHora(o.inicio&&o.inicio.em)}</div>
+      <div class="kc-tm">${fmtMin(tempoLiquido(o,new Date().toISOString()))} ${htmlLeadMini(o)}</div>
+    </button>`;
+  }
+  function kbCardLote(g){
+    const projs=[...g.projs];
+    return `<button class="kc fl" style="--sc:${COR_FILA}" data-lote="${esc(g.lote)}" onclick="abrirLoteFila(this.dataset.lote)">
+      <div class="kc-t"><span class="kc-n">Lote ${esc(g.lote)}</span></div>
+      <div class="kc-cli">${projs.length?projs.length+' projeto(s): '+esc(projs.join(', ')):'—'}</div>
+      <div class="kc-f">agrupado ${fmtHora(g.em)} · ${filaHa(g.em)}</div>
+      ${g.feitas<g.total?`<div class="kc-f">${g.feitas}/${g.total} OPs de agrupamento apontadas</div>`:''}
+      <div class="kc-dica">Toque para ver clientes e ambientes</div>
+    </button>`;
+  }
+  function kbCardRolete(p){
+    const cli=p.clientes.join(' / '), amb=p.ambientes.join(', ');
+    return `<div class="kc fl" style="--sc:${COR_FILA}">
+      <div class="kc-t"><span class="kc-n">Projeto ${esc(p.projeto)}</span><span class="kc-pill">Lote ${esc(p.lote)}</span></div>
+      ${(cli||amb)?`<div class="kc-cli">${esc([cli,amb].filter(Boolean).join(' · '))}</div>`:''}
+      <div class="kc-f">usinado ${fmtHora(p.em)} · ${filaHa(p.em)}</div>
+    </div>`;
+  }
+  const KB_VAZIO={agrupados:'Nenhum lote aguardando o corte',rolete:'Nenhum projeto aguardando a montagem'};
+  function telaKanban(){
+    topoPrincipal();
+    const kOld=document.getElementById('kb'), nOld=document.getElementById('kbNav');
+    const sx=kOld?kOld.scrollLeft:0, sn=nOld?nOld.scrollLeft:0;
+    const cols=kbColunas();
+    const nAnd=OPS.filter(o=>stOp(o)==='parcial').length, nPau=OPS.filter(o=>stOp(o)==='pausada').length;
+    const haAlgo=cols.some(c=>c.itens.length);
+    v.innerHTML=!haAlgo
+      ? `<div class="vazio"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="10" y="4" width="5" height="10" rx="1.5"/><rect x="17" y="4" width="4" height="13" rx="1.5"/></svg>
+          <b>Nada em andamento agora</b><span>As OPs iniciadas e as filas de espera aparecem aqui.</span></div>`
+      : `<div class="kb-res"><b>${nAnd}</b> em andamento${nPau?` · <b>${nPau}</b> pausada${nPau>1?'s':''}`:''}</div>
+        <div class="kb-nav" id="kbNav">${cols.map((c,i)=>`<button class="kb-chip ${i===0?'on':''}" style="--sc:${c.cor}" onclick="kbIr(${i})">
+          <i></i>${esc(c.nome)}<b>${c.itens.length}</b></button>`).join('')}</div>
+        <div class="kb" id="kb" onscroll="kbSync()">${cols.map(c=>`
+          <div class="kb-col ${c.tipo==='op'?'':'fila'}" style="--sc:${c.cor}">
+            <div class="kb-h"><div class="kb-g">${esc(c.grupo)}</div>
+              <div class="kb-l"><span>${esc(c.nome)}</span><span class="kb-q">${c.itens.length}</span></div></div>
+            <div class="kb-b">${c.itens.length
+              ? c.itens.map(x=>c.tipo==='op'?kbCard(x,c.cor):(c.tipo==='agrupados'?kbCardLote(x):kbCardRolete(x))).join('')
+              : `<div class="kb-vz">${KB_VAZIO[c.tipo]||''}</div>`}</div>
+          </div>`).join('')}</div>`;
+    const kb=document.getElementById('kb'), nv=document.getElementById('kbNav');
+    if(kb&&sx) kb.scrollLeft=sx;
+    if(nv&&sn) nv.scrollLeft=sn;
+    kbSync();
+  }
+  function kbIr(i){
+    const kb=document.getElementById('kb'); if(!kb) return;
+    const c=kb.children[i]; if(!c) return;
+    kb.scrollTo({left:Math.max(0,c.offsetLeft-14),behavior:'smooth'});
+  }
+  function kbSync(){
+    const kb=document.getElementById('kb'), nv=document.getElementById('kbNav'); if(!kb||!nv) return;
+    let ativo=0, melhor=1e9;
+    [...kb.children].forEach((c,i)=>{ const d=Math.abs(c.offsetLeft-14-kb.scrollLeft); if(d<melhor){ melhor=d; ativo=i; } });
+    [...nv.children].forEach((b,i)=>{
+      const on=i===ativo;
+      if(on!==b.classList.contains('on')){ b.classList.toggle('on',on);
+        if(on) nv.scrollTo({left:b.offsetLeft-14,behavior:'smooth'}); }
+    });
+  }
+  // Detalhe do lote: todos os projetos, clientes e ambientes
+  function abrirLoteFila(lote){
+    lote=String(lote||'').trim();
+    const projs=new Map();
+    const add=r=>{ const p=String(r.projeto||'').trim(); if(!p) return;
+      const x=projs.get(p)||{projeto:p,clientes:new Set(),ambientes:new Set()};
+      if(r.cliente) x.clientes.add(String(r.cliente).trim());
+      if(r.ambiente) x.ambientes.add(String(r.ambiente).trim());
+      projs.set(p,x); };
+    PAINEL.filter(r=>String(r.lote||'').trim()===lote).forEach(add);
+    OPS.filter(o=>loteDaOP(o)===lote).forEach(o=>{
+      (o.projetosLote||[]).forEach(r=>{ if(r) add(r); });
+      if(o.projeto&&!(o.projetosLote||[]).length) add({projeto:o.projeto});
+    });
+    const lista=[...projs.values()].sort((a,b)=>a.projeto.localeCompare(b.projeto,undefined,{numeric:true}));
+    const totAmb=lista.reduce((n,x)=>n+x.ambientes.size,0);
+    document.getElementById('sheetT').textContent='Lote '+lote;
+    document.getElementById('sheetB').innerHTML=lista.length
+      ? `<p class="lf-r">${lista.length} projeto(s) · ${totAmb} ambiente(s)</p>`+lista.map(x=>`<div class="lf">
+          <div class="lf-n">Projeto ${esc(x.projeto)}</div>
+          <div class="lf-c">${esc([...x.clientes].join(' / ')||'Cliente não informado')}</div>
+          ${x.ambientes.size?`<ul>${[...x.ambientes].map(a=>`<li>${esc(a)}</li>`).join('')}</ul>`:'<div class="kc-f">Ambiente não informado</div>'}
+        </div>`).join('')
+      : '<p class="lf-r">Nenhum projeto encontrado para este lote.</p>';
+    document.getElementById('sheet').classList.add('on');
+  }
+  function fecharSheet(){ document.getElementById('sheet').classList.remove('on'); }
+
+  /* ===== LEITOR DE CÓDIGO DE BARRAS PELA CÂMERA =====
+     A OP impressa tem 3 códigos (Code 128): o número da OP, "I"+número (início) e "F"+número (fim).
+     Qualquer um deles abre a OP aqui. Nada é iniciado/encerrado sozinho: o operador confere quem executa e confirma. */
+  const ZXING_URL='https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js';
+  const ZXING_SRI='';   // opcional: cole aqui o hash "sha384-..." da biblioteca (ver instruções na entrega)
+  let scan={on:false,stream:null,det:null,t:0,ult:'',ultT:0,torch:false,msgT:0};
+  function scanMsg(t,erro){
+    const m=document.getElementById('scanMsg'); if(!m) return;
+    m.textContent=t; m.classList.toggle('err',!!erro);
+    clearTimeout(scan.msgT);
+    if(erro) scan.msgT=setTimeout(()=>{ m.textContent='Aponte para o código de barras da OP'; m.classList.remove('err'); },2500);
+  }
+  function resolverCodigo(cod){
+    cod=String(cod||'').trim().toUpperCase().replace(/\s+/g,'');
+    let acao=null, num=cod;
+    if(/^I\d+$/.test(cod)){ acao='inicio'; num=cod.slice(1); }
+    else if(/^F\d+$/.test(cod)){ acao='fim'; num=cod.slice(1); }
+    return {acao,num,op:cod?OPS.find(x=>String(x.numero)===num):null};
+  }
+  function abrirOPpeloCodigo(r){
+    const o=r.op, st=stOp(o);
+    abrirOP(o.id,'tab');
+    let dica='OP '+o.numero;
+    if(r.acao==='inicio'){
+      dica = st==='nao' ? 'OP '+o.numero+' — escolha quem vai executar e toque em Iniciar'
+           : st==='encerrada' ? 'OP '+o.numero+' já está encerrada' : 'OP '+o.numero+' já foi iniciada';
+    }else if(r.acao==='fim'){
+      dica = st==='parcial' ? 'OP '+o.numero+' — confira quem está encerrando e toque em Encerrar'
+           : st==='pausada' ? 'OP '+o.numero+' está pausada — retome antes de encerrar'
+           : st==='encerrada' ? 'OP '+o.numero+' já está encerrada' : 'OP '+o.numero+' ainda não foi iniciada';
+    }
+    toast(dica);
+  }
+  function scanTratar(raw){
+    const cod=String(raw||'').trim(); if(!cod) return false;
+    const agora=Date.now();
+    if(cod===scan.ult && agora-scan.ultT<2500) return false;     // mesma leitura em sequência
+    scan.ult=cod; scan.ultT=agora;
+    const r=resolverCodigo(cod);
+    if(!r.op){ scanMsg('OP '+r.num+' não encontrada',true); if(navigator.vibrate) navigator.vibrate([80,60,80]); return false; }
+    if(navigator.vibrate) navigator.vibrate(60);
+    fecharScanner(); abrirOPpeloCodigo(r); return true;
+  }
+  function scanManual(){
+    const i=document.getElementById('scanNum'); const cod=(i.value||'').trim(); if(!cod) return;
+    const r=resolverCodigo(cod);
+    if(!r.op){ scanMsg('OP '+r.num+' não encontrada',true); return; }
+    i.value=''; fecharScanner(); abrirOPpeloCodigo(r);
+  }
+  async function criarDetector(){
+    if(!('BarcodeDetector' in window)) return null;
+    try{ const f=await BarcodeDetector.getSupportedFormats();
+      return f.includes('code_128')?new BarcodeDetector({formats:['code_128']}):null; }catch(e){ return null; }
+  }
+  function carregarZXing(){
+    if(window.ZXing) return Promise.resolve();
+    return new Promise((ok,ko)=>{
+      const el=document.createElement('script'); el.src=ZXING_URL; el.async=true;
+      if(ZXING_SRI){ el.integrity=ZXING_SRI; el.crossOrigin='anonymous'; }
+      el.onload=()=>ok(); el.onerror=()=>ko(new Error('Falha ao carregar o leitor'));
+      document.head.appendChild(el);
+    });
+  }
+  async function abrirScanner(){
+    if(scan.on) return;
+    scan.on=true; scan.ult=''; scan.torch=false;
+    document.getElementById('scan').classList.add('on');
+    document.getElementById('scanNum').value='';
+    document.getElementById('scanTorch').hidden=true;
+    document.getElementById('scanTorch').classList.remove('on');
+    scanMsg('Abrindo a câmera...');
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+      scanMsg('Câmera indisponível neste navegador. Digite o número da OP abaixo.',true); return; }
+    try{
+      scan.stream=await navigator.mediaDevices.getUserMedia({audio:false,
+        video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}}});
+    }catch(e){
+      scan.on&&scanMsg((e&&e.name==='NotAllowedError')
+        ? 'Permita o acesso à câmera nas configurações do navegador, ou digite o número da OP abaixo.'
+        : 'Não foi possível abrir a câmera. Digite o número da OP abaixo.',true);
+      return;
+    }
+    if(!scan.on){ scan.stream.getTracks().forEach(t=>t.stop()); scan.stream=null; return; }   // fechou enquanto pedia permissão
+    const vid=document.getElementById('scanVid');
+    vid.srcObject=scan.stream;
+    try{ await vid.play(); }catch(e){}
+    try{ const trk=scan.stream.getVideoTracks()[0], cap=trk.getCapabilities?trk.getCapabilities():{};
+      if(cap&&cap.torch) document.getElementById('scanTorch').hidden=false; }catch(e){}
+    scanMsg('Aponte para o código de barras da OP');
+    scan.det=await criarDetector();
+    if(!scan.on) return;
+    if(scan.det) return scanLoopNativo();
+    try{ await carregarZXing(); }catch(e){ scanMsg('Não foi possível carregar o leitor. Digite o número da OP abaixo.',true); return; }
+    if(scan.on) scanLoopZXing();
+  }
+  async function scanLoopNativo(){
+    if(!scan.on) return;
+    const vid=document.getElementById('scanVid');
+    if(vid.readyState>=2){
+      try{ const r=await scan.det.detect(vid); if(r.length && scanTratar(r[0].rawValue)) return; }catch(e){}
+    }
+    if(scan.on) scan.t=setTimeout(scanLoopNativo,120);
+  }
+  function scanLoopZXing(){
+    const vid=document.getElementById('scanVid'), cv=document.createElement('canvas'), cx=cv.getContext('2d',{willReadFrequently:true});
+    const hints=new Map();
+    hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS,[ZXing.BarcodeFormat.CODE_128]);
+    hints.set(ZXing.DecodeHintType.TRY_HARDER,true);
+    const leitor=new ZXing.MultiFormatReader(); leitor.setHints(hints);
+    (function passo(){
+      if(!scan.on) return;
+      if(vid.readyState>=2 && vid.videoWidth){
+        const w=Math.min(960,vid.videoWidth), h=Math.round(vid.videoHeight*w/vid.videoWidth);
+        cv.width=w; cv.height=h; cx.drawImage(vid,0,0,w,h);
+        try{
+          const bmp=new ZXing.BinaryBitmap(new ZXing.HybridBinarizer(new ZXing.HTMLCanvasElementLuminanceSource(cv)));
+          const r=leitor.decode(bmp);
+          if(r && scanTratar(r.getText())) return;
+        }catch(e){ /* nenhum código neste quadro */ }
+      }
+      scan.t=setTimeout(passo,140);
+    })();
+  }
+  function scanLanterna(){
+    try{ const trk=scan.stream&&scan.stream.getVideoTracks()[0]; if(!trk) return;
+      scan.torch=!scan.torch;
+      trk.applyConstraints({advanced:[{torch:scan.torch}]}).then(()=>{
+        document.getElementById('scanTorch').classList.toggle('on',scan.torch); }).catch(()=>{ scan.torch=false; });
+    }catch(e){}
+  }
+  function fecharScanner(){
+    scan.on=false; clearTimeout(scan.t); clearTimeout(scan.msgT);
+    if(scan.stream){ scan.stream.getTracks().forEach(t=>t.stop()); scan.stream=null; }
+    const vid=document.getElementById('scanVid'); if(vid) vid.srcObject=null;
+    document.getElementById('scan').classList.remove('on');
+  }
+  document.addEventListener('visibilitychange',()=>{ if(document.hidden&&scan.on) fecharScanner(); });
+
   /* ---- sync ---- */
   let ligados=false;
   function ligar(){
@@ -1012,7 +1472,7 @@
     db.ref('ops').on('value',s=>{ OPS=Object.values(s.val()||{}); render(); });
     db.ref('contadores').on('value',s=>{ CONTADORES=s.val()||{}; });
     db.ref('leadtimes').on('value',s=>{ LEADS=s.val()||{}; render(); });
-    db.ref('feriados').on('value',s=>{ FERIADOS=s.val()||{}; if(typeof render==='function'&&TELA==null) render(); });
+    db.ref('feriados').on('value',s=>{ FERIADOS=s.val()||{}; render(); });
     db.ref('.info/connected').on('value',s=>{ document.getElementById('off').classList.toggle('on',s.val()===false); });
   }
 
@@ -1063,9 +1523,10 @@
     else{ const f=document.getElementById('loginForm'); if(f) f.reset(); mostrar('login'); }
   });
   // atualiza o tempo em curso a cada minuto
-  setInterval(()=>{ if(vista==='op'||vista==='projeto') render(); },60000);
+  setInterval(()=>{ if(vista==='op'||vista==='projeto'||vista==='kanban') render(); },60000);
 
-  Object.assign(window,{entrar,sair,render,irLista,listaFiltrar,htmlProjetos,limparBusca,abrirProjeto,abrirOP,iniciar,pausar,retomar,encerrar,selFunc,diag,addPend,togPend,delPend,
+  Object.assign(window,{irKanban,irAba,voltarOP,kbIr,kbSync,abrirLoteFila,fecharSheet,abrirScanner,fecharScanner,scanManual,scanLanterna,
+    entrar,sair,render,irLista,listaFiltrar,htmlProjetos,limparBusca,abrirProjeto,abrirOP,iniciar,pausar,retomar,encerrar,selFunc,diag,addPend,togPend,delPend,
     iniciarExtra,finalizarExtra,htmlLead,htmlLeadMini,htmlExtra,leadStatus,leadMinOP,fmtCron,tickLead});
 
   // ===== PWA: service worker (instalação e atualização automática) =====
